@@ -7,15 +7,15 @@ import (
 )
 
 type catalogCustomAttributeValue struct {
-	BooleanValue                bool                                 `json:"boolean_value,omitempty"`
-	CustomAttributeDefinitionID string                               `json:"custom_attribute_definition_id,omitempty"`
-	Key                         string                               `json:"key,omitempty"`
-	Name                        string                               `json:"name,omitempty"`
-	NumberValue                 string                               `json:"number_value,omitempty`
-	SelectionUIDValues          []string                             `json:"selection_uid_values,omitempty`
-	StringValue                 string                               `json:"string_value,omitempty"`
-	Type                        catalogCustomAttributeDefinitionType `json:"type,omitempty"`
+	*catalogCustomAttributeValueAlias
+	BooleanValue       bool                                 `json:"boolean_value,omitempty"`
+	NumberValue        string                               `json:"number_value,omitempty"`
+	SelectionUIDValues []string                             `json:"selection_uid_values,omitempty"`
+	StringValue        string                               `json:"string_value,omitempty"`
+	Type               catalogCustomAttributeDefinitionType `json:"type,omitempty"`
 }
+
+type catalogCustomAttributeValueAlias CatalogCustomAttributeValue
 
 type CatalogCustomAttributeValueType interface {
 	isCatalogCustomAttributeValueType()
@@ -32,17 +32,15 @@ func (CatalogCustomAttributeValueSelection) isCatalogCustomAttributeValueType() 
 func (CatalogCustomAttributeValueString) isCatalogCustomAttributeValueType()    {}
 
 type CatalogCustomAttributeValue struct {
-	CustomAttributeDefinitionID string
-	Key                         string
-	Name                        string
-	Type                        CatalogCustomAttributeValueType
+	CustomAttributeDefinitionID string                          `json:"custom_attribute_definition_id,omitempty"`
+	Key                         string                          `json:"key,omitempty"`
+	Name                        string                          `json:"name,omitempty"`
+	Type                        CatalogCustomAttributeValueType `json:"-"`
 }
 
 func (c *CatalogCustomAttributeValue) MarshalJSON() ([]byte, error) {
 	cJson := catalogCustomAttributeValue{
-		CustomAttributeDefinitionID: c.CustomAttributeDefinitionID,
-		Key:                         c.Key,
-		Name:                        c.Name,
+		catalogCustomAttributeValueAlias: (*catalogCustomAttributeValueAlias)(c),
 	}
 
 	switch t := c.Type.(type) {
@@ -69,14 +67,13 @@ func (c *CatalogCustomAttributeValue) MarshalJSON() ([]byte, error) {
 }
 
 func (c *CatalogCustomAttributeValue) UnmarshalJSON(data []byte) error {
-	cJson := &catalogCustomAttributeValue{}
+	cJson := catalogCustomAttributeValue{
+		catalogCustomAttributeValueAlias: (*catalogCustomAttributeValueAlias)(c),
+	}
 	err := json.Unmarshal(data, &cJson)
 	if err != nil {
 		return fmt.Errorf("Error unmarshaling catalog object: %w", err)
 	}
-	c.CustomAttributeDefinitionID = cJson.CustomAttributeDefinitionID
-	c.Key = cJson.Key
-	c.Name = cJson.Name
 
 	switch cJson.Type {
 	case catalogCustomAttributeDefinitionTypeBoolean:

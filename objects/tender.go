@@ -9,21 +9,13 @@ import (
 )
 
 type tender struct {
-	ID                   string                 `json:"id,omitempty"`
-	LocationID           string                 `json:"location_id,omitempty"`
-	TransactionID        string                 `json:"transaction_id,omitempty"`
-	CreatedAt            *time.Time             `json:"created_at,omitempty"`
-	Note                 string                 `json:"note,omitempty"`
-	AmountMoney          *Money                 `json:"amount_money,omitempty"`
-	TipMoney             *Money                 `json:"tip_money,omitempty"`
-	ProcessingFeeMoney   *Money                 `json:"processing_fee_money,omitempty"`
-	CustomerID           string                 `json:"customer_id,omitempty"`
-	Type                 TenderType             `json:"type,omitempty"`
-	CardDetails          *TenderCardDetails     `json:"card_details,omitempty"`
-	CashDetails          *TenderCashDetails     `json:"cash_details,omitempty"`
-	AdditionalRecipients []*AdditionalRecipient `json:"additional_recipients,omitempty"`
-	PaymentID            string                 `json:"payment_id,omitempty"`
+	*tenderAlias
+	Type        TenderType         `json:"type,omitempty"`
+	CardDetails *TenderCardDetails `json:"card_details,omitempty"`
+	CashDetails *TenderCashDetails `json:"cash_details,omitempty"`
 }
+
+type tenderAlias Tender
 
 type tenderType interface {
 	isTenderType()
@@ -40,18 +32,18 @@ func (*NoSaleDetails) isTenderType()          {}
 func (*OtherTenderTypeDetails) isTenderType() {}
 
 type Tender struct {
-	ID                   string
-	LocationID           string
-	TransactionID        string
-	CreatedAt            *time.Time
-	Note                 string
-	AmountMoney          *Money
-	TipMoney             *Money
-	ProcessingFeeMoney   *Money
-	CustomerID           string
-	Type                 tenderType
-	AdditionalRecipients []*AdditionalRecipient
-	PaymentID            string
+	ID                   string                 `json:"id,omitempty"`
+	LocationID           string                 `json:"location_id,omitempty"`
+	TransactionID        string                 `json:"transaction_id,omitempty"`
+	CreatedAt            *time.Time             `json:"created_at,omitempty"`
+	Note                 string                 `json:"note,omitempty"`
+	AmountMoney          *Money                 `json:"amount_money,omitempty"`
+	TipMoney             *Money                 `json:"tip_money,omitempty"`
+	ProcessingFeeMoney   *Money                 `json:"processing_fee_money,omitempty"`
+	CustomerID           string                 `json:"customer_id,omitempty"`
+	Type                 tenderType             `json:"-"`
+	AdditionalRecipients []*AdditionalRecipient `json:"additional_recipients,omitempty"`
+	PaymentID            string                 `json:"payment_id,omitempty"`
 }
 
 type TenderType string
@@ -67,17 +59,7 @@ const (
 
 func (t *Tender) MarshalJSON() ([]byte, error) {
 	tJson := tender{
-		ID:                   t.ID,
-		LocationID:           t.LocationID,
-		TransactionID:        t.TransactionID,
-		CreatedAt:            t.CreatedAt,
-		Note:                 t.Note,
-		AmountMoney:          t.AmountMoney,
-		TipMoney:             t.TipMoney,
-		ProcessingFeeMoney:   t.ProcessingFeeMoney,
-		CustomerID:           t.CustomerID,
-		AdditionalRecipients: t.AdditionalRecipients,
-		PaymentID:            t.PaymentID,
+		tenderAlias: (*tenderAlias)(t),
 	}
 
 	switch details := t.Type.(type) {
@@ -103,23 +85,13 @@ func (t *Tender) MarshalJSON() ([]byte, error) {
 }
 
 func (t *Tender) UnmarshalJSON(b []byte) error {
-	tJson := tender{}
+	tJson := tender{
+		tenderAlias: (*tenderAlias)(t),
+	}
 	err := json.Unmarshal(b, &tJson)
 	if err != nil {
 		return fmt.Errorf("Error unmarshaling Tender json: %w", err)
 	}
-
-	t.ID = tJson.ID
-	t.LocationID = tJson.LocationID
-	t.TransactionID = tJson.TransactionID
-	t.CreatedAt = tJson.CreatedAt
-	t.Note = tJson.Note
-	t.AmountMoney = tJson.AmountMoney
-	t.TipMoney = tJson.TipMoney
-	t.ProcessingFeeMoney = tJson.ProcessingFeeMoney
-	t.CustomerID = tJson.CustomerID
-	t.AdditionalRecipients = tJson.AdditionalRecipients
-	t.PaymentID = tJson.PaymentID
 
 	switch tJson.Type {
 	case tenderTypeCard:

@@ -33,11 +33,11 @@ func (*CatalogDiscountVariablePercentage) isCatalogDiscountType() {}
 func (*CatalogDiscountVariableAmount) isCatalogDiscountType()     {}
 
 type CatalogDiscount struct {
-	Name           string
-	DiscountType   CatalogDiscountType
-	PinRequired    bool
-	LabelColor     string
-	ModifyTaxBasis string
+	Name           string              `json:"name,omitempty"`
+	DiscountType   CatalogDiscountType `json:"-"`
+	PinRequired    bool                `json:"pin_required,omitempty"`
+	LabelColor     string              `json:"label_color,omitempty"`
+	ModifyTaxBasis string              `json:"modify_tax_basis,omitempty"`
 }
 
 func (*CatalogDiscount) isCatalogObjectType() {}
@@ -51,22 +51,18 @@ const (
 	catalogDiscountTypeVariableAmount     catalogDiscountType = "VARIABLE_AMOUNT"
 )
 
+type catalogDiscountAlias CatalogDiscount
+
 type catalogDiscount struct {
-	Name           string              `json:"name,omitempty"`
-	DiscountType   catalogDiscountType `json:"discount_type,omitempty"`
-	Percentage     string              `json:"percentage,omitempty"`
-	AmountMoney    *Money              `json:"amount_money,omitempty"`
-	PinRequired    bool                `json:"pin_required,omitempty"`
-	LabelColor     string              `json:"label_color,omitempty"`
-	ModifyTaxBasis string              `json:"modify_tax_basis,omitempty"`
+	*catalogDiscountAlias
+	DiscountType catalogDiscountType `json:"discount_type,omitempty"`
+	Percentage   string              `json:"percentage,omitempty"`
+	AmountMoney  *Money              `json:"amount_money,omitempty"`
 }
 
 func (c *CatalogDiscount) MarshalJSON() ([]byte, error) {
 	jsonType := catalogDiscount{
-		Name:           c.Name,
-		PinRequired:    c.PinRequired,
-		LabelColor:     c.LabelColor,
-		ModifyTaxBasis: c.ModifyTaxBasis,
+		catalogDiscountAlias: (*catalogDiscountAlias)(c),
 	}
 	switch d := c.DiscountType.(type) {
 	case *CatalogDiscountFixedPercentage:
@@ -93,16 +89,13 @@ func (c *CatalogDiscount) MarshalJSON() ([]byte, error) {
 }
 
 func (c *CatalogDiscount) UnmarshalJSON(b []byte) error {
-	jsonType := catalogDiscount{}
+	jsonType := catalogDiscount{
+		catalogDiscountAlias: (*catalogDiscountAlias)(c),
+	}
 	err := json.Unmarshal(b, &jsonType)
 	if err != nil {
 		return fmt.Errorf("error unmarshaling catalog discount: %w", err)
 	}
-
-	c.Name = jsonType.Name
-	c.PinRequired = jsonType.PinRequired
-	c.LabelColor = jsonType.LabelColor
-	c.ModifyTaxBasis = jsonType.ModifyTaxBasis
 
 	switch jsonType.DiscountType {
 	case catalogDiscountTypeFixedPercentage:

@@ -25,18 +25,13 @@ const (
 )
 
 type orderLineItemDiscount struct {
-	UID             string                     `json:"uid,omitempty"`
-	CatalogObjectID string                     `json:"catalog_object_id,omitempty"`
-	Name            string                     `json:"name,omitempty"`
-	Type            orderLineItemDiscountType  `json:"type,omitempty"`
-	Percentage      string                     `json:"percentage,omitempty"`
-	AmountMoney     *Money                     `json:"amount_money,omitempty"`
-	AppliedMoney    *Money                     `json:"applied_money,omitempty"`
-	Scope           OrderLineItemDiscountScope `json:"scope,omitempty"`
-	Metadata        map[string]string          `json:"metadata,omitempty"`
-	RewardIDs       []string                   `json:"reward_ids,omitempty"`
-	PricingRuleID   string                     `json:"pricing_rule_id,omitempty"`
+	*orderLineItemDiscountAlias
+	Type        orderLineItemDiscountType `json:"type,omitempty"`
+	Percentage  string                    `json:"percentage,omitempty"`
+	AmountMoney *Money                    `json:"amount_money,omitempty"`
 }
+
+type orderLineItemDiscountAlias OrderLineItemDiscount
 
 type OrderLineItemDiscountType interface {
 	isOrderLineItemDiscountType()
@@ -67,27 +62,20 @@ func (*OrderLineItemDiscountVariablePercentage) isOrderLineItemDiscountType() {}
 func (*OrderLineItemDiscountVariableAmount) isOrderLineItemDiscountType()     {}
 
 type OrderLineItemDiscount struct {
-	UID             string
-	CatalogObjectID string
-	Name            string
-	Type            OrderLineItemDiscountType
-	AppliedMoney    *Money
-	Scope           OrderLineItemDiscountScope
-	Metadata        map[string]string
-	RewardIDs       []string
-	PricingRuleID   string
+	UID             string                     `json:"uid,omitempty"`
+	CatalogObjectID string                     `json:"catalog_object_id,omitempty"`
+	Name            string                     `json:"name,omitempty"`
+	Type            OrderLineItemDiscountType  `json:"-"`
+	AppliedMoney    *Money                     `json:"applied_money,omitempty"`
+	Scope           OrderLineItemDiscountScope `json:"scope,omitempty"`
+	Metadata        map[string]string          `json:"metadata,omitempty"`
+	RewardIDs       []string                   `json:"reward_ids,omitempty"`
+	PricingRuleID   string                     `json:"pricing_rule_id,omitempty"`
 }
 
 func (o *OrderLineItemDiscount) MarshalJSON() ([]byte, error) {
 	jsonData := orderLineItemDiscount{
-		UID:             o.UID,
-		CatalogObjectID: o.CatalogObjectID,
-		Name:            o.Name,
-		AppliedMoney:    o.AppliedMoney,
-		Scope:           o.Scope,
-		Metadata:        o.Metadata,
-		RewardIDs:       o.RewardIDs,
-		PricingRuleID:   o.PricingRuleID,
+		orderLineItemDiscountAlias: (*orderLineItemDiscountAlias)(o),
 	}
 
 	switch t := o.Type.(type) {
@@ -115,20 +103,14 @@ func (o *OrderLineItemDiscount) MarshalJSON() ([]byte, error) {
 }
 
 func (o *OrderLineItemDiscount) UnmarshalJSON(input []byte) error {
-	jsonData := orderLineItemDiscount{}
+	jsonData := orderLineItemDiscount{
+		orderLineItemDiscountAlias: (*orderLineItemDiscountAlias)(o),
+	}
 	err := json.Unmarshal(input, &jsonData)
 	if err != nil {
 		return err
 	}
 
-	o.UID = jsonData.UID
-	o.CatalogObjectID = jsonData.CatalogObjectID
-	o.Name = jsonData.Name
-	o.AppliedMoney = jsonData.AppliedMoney
-	o.Scope = jsonData.Scope
-	o.Metadata = jsonData.Metadata
-	o.RewardIDs = jsonData.RewardIDs
-	o.PricingRuleID = jsonData.PricingRuleID
 	switch jsonData.Type {
 	case orderLineItemDiscountTypeUnknownDiscount:
 		o.Type = &OrderLineItemDiscountUnknownDiscount{}

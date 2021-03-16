@@ -31,26 +31,21 @@ const (
 )
 
 type catalogCustomAttributeDefinition struct {
-	AllowedObjectTypes        CatalogObjectType                                `json:"allowed_object_types,omitempty"`
-	Name                      string                                           `json:"name,omitempty"`
-	Type                      catalogCustomAttributeDefinitionType             `json:"type,omitempty"`
-	AppVisibility             CatalogCustomAttributeDefinitionAppVisibility    `json:"app_visibility,omitempty"`
-	CustomAttributeUsageCount int                                              `json:"custom_attribute_usage_count,omitempty"`
-	Description               string                                           `json:"description,string"`
-	Key                       string                                           `json:"key,omitempty"`
-	NumberConfig              *CatalogCustomAttributeDefinitionNumberConfig    `json:"number_config,omitempty"`
-	SelectionConfig           *CatalogCustomAttributeDefinitionSelectionConfig `json:"selection_config,omitempty"`
-	SellerVisibility          CatalogCustomAttributeDefinitionSellerVisibility `json:"seller_visibility,omitempty"`
-	SourceApplication         *SourceApplication                               `json:"source_application,omitempty"`
-	StringConfig              *CatalogCustomAttributeDefinitionStringConfig    `json:"string_config,omitempty"`
+	Type            catalogCustomAttributeDefinitionType             `json:"type,omitempty"`
+	NumberConfig    *CatalogCustomAttributeDefinitionNumberConfig    `json:"number_config,omitempty"`
+	SelectionConfig *CatalogCustomAttributeDefinitionSelectionConfig `json:"selection_config,omitempty"`
+	StringConfig    *CatalogCustomAttributeDefinitionStringConfig    `json:"string_config,omitempty"`
+	*catalogCustomAttributeDefinitionAlias
 }
+
+type catalogCustomAttributeDefinitionAlias CatalogCustomAttributeDefinition
 
 type CatalogCustomAttributeDefinitionNumberConfig struct {
 	Precision int `json:"precision,omitempty"`
 }
 
 type CatalogCustomAttributeDefinitionSelectionConfig struct {
-	AllowedSelections    []*CatalogCustomAttributeDefinitionSelectionConfigCustomAttributeSelection `json:allowed_selections,omitempty"`
+	AllowedSelections    []*CatalogCustomAttributeDefinitionSelectionConfigCustomAttributeSelection `json:"allowed_selections,omitempty"`
 	MaxAllowedSelections int                                                                        `json:"max_allowed_selections,omitempty"`
 }
 
@@ -84,29 +79,22 @@ func (*CatalogCustomAttributeDefinitionTypeNumber) isCatalogCustomAttributeDefin
 func (*CatalogCustomAttributeDefinitionTypeSelection) isCatalogCustomAttributeDefinitionType() {}
 
 type CatalogCustomAttributeDefinition struct {
-	AllowedObjectTypes        CatalogObjectType
-	Name                      string
-	Type                      CatalogCustomAttributeDefinitionType
-	AppVisibility             CatalogCustomAttributeDefinitionAppVisibility
-	CustomAttributeUsageCount int
-	Description               string
-	Key                       string
-	SellerVisibility          CatalogCustomAttributeDefinitionSellerVisibility
-	SourceApplication         *SourceApplication
+	AllowedObjectTypes        CatalogObjectType                                `json:"allowed_object_types,omitempty"`
+	Name                      string                                           `json:"name,omitempty"`
+	Type                      CatalogCustomAttributeDefinitionType             `json:"-"`
+	AppVisibility             CatalogCustomAttributeDefinitionAppVisibility    `json:"app_visibility,omitempty"`
+	CustomAttributeUsageCount int                                              `json:"custom_attribute_usage_count,omitempty"`
+	Description               string                                           `json:"description,string"`
+	Key                       string                                           `json:"key,omitempty"`
+	SellerVisibility          CatalogCustomAttributeDefinitionSellerVisibility `json:"seller_visibility,omitempty"`
+	SourceApplication         *SourceApplication                               `json:"source_application,omitempty"`
 }
 
 func (*CatalogCustomAttributeDefinition) isCatalogObjectType() {}
 
 func (c *CatalogCustomAttributeDefinition) MarshalJSON() ([]byte, error) {
 	cJson := catalogCustomAttributeDefinition{
-		AllowedObjectTypes:        c.AllowedObjectTypes,
-		Name:                      c.Name,
-		AppVisibility:             c.AppVisibility,
-		CustomAttributeUsageCount: c.CustomAttributeUsageCount,
-		Description:               c.Description,
-		Key:                       c.Key,
-		SellerVisibility:          c.SellerVisibility,
-		SourceApplication:         c.SourceApplication,
+		catalogCustomAttributeDefinitionAlias: (*catalogCustomAttributeDefinitionAlias)(c),
 	}
 
 	switch t := c.Type.(type) {
@@ -132,19 +120,13 @@ func (c *CatalogCustomAttributeDefinition) MarshalJSON() ([]byte, error) {
 }
 
 func (c *CatalogCustomAttributeDefinition) UnmarshalJSON(data []byte) error {
-	cJson := &catalogCustomAttributeDefinition{}
+	cJson := catalogCustomAttributeDefinition{
+		catalogCustomAttributeDefinitionAlias: (*catalogCustomAttributeDefinitionAlias)(c),
+	}
 	err := json.Unmarshal(data, &cJson)
 	if err != nil {
 		return fmt.Errorf("Error unmarshaling catalog object: %w", err)
 	}
-	c.AllowedObjectTypes = cJson.AllowedObjectTypes
-	c.Name = cJson.Name
-	c.AppVisibility = cJson.AppVisibility
-	c.CustomAttributeUsageCount = cJson.CustomAttributeUsageCount
-	c.Description = cJson.Description
-	c.Key = cJson.Key
-	c.SellerVisibility = cJson.SellerVisibility
-	c.SourceApplication = cJson.SourceApplication
 
 	switch cJson.Type {
 	case catalogCustomAttributeDefinitionTypeBoolean:

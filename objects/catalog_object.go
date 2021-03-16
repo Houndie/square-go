@@ -30,35 +30,28 @@ const (
 	CatalogObjectTypeQuickAmountsSettings      CatalogObjectType = "QUICK_AMOUNTS_SETTINGS"
 )
 
+type catalogObjectAlias CatalogObject
+
 type catalogObject struct {
-	Type                          CatalogObjectType                       `json:"type,omitempty"`
-	ID                            string                                  `json:"id,omitempty"`
-	UpdatedAt                     *time.Time                              `json:"updated_at,omitempty"`
-	Version                       int                                     `json:"version,omitempty"`
-	IsDeleted                     bool                                    `json:"is_deleted,omitempty"`
-	CustomAttributeValues         map[string]*CatalogCustomAttributeValue `json:"custom_attribute_values,omitempty"`
-	CatalogV1IDs                  []*CatalogV1ID                          `json:"catalog_v1_ids,omitempty"`
-	PresentAtAllLocations         bool                                    `json:"present_at_all_locations,omitempty"`
-	PresentAtLocationIDs          []string                                `json:"present_at_location_ids,omitempty"`
-	AbsentAtLocationIDs           []string                                `json:"absent_at_location_ids,omitempty"`
-	ImageID                       string                                  `json:"image_id,omitempty"`
-	ItemData                      *CatalogItem                            `json:"item_data,omitempty"`
-	CategoryData                  *CatalogCategory                        `json:"category_data,omitempty"`
-	ItemVariationData             *CatalogItemVariation                   `json:"item_variation_data,omitempty"`
-	TaxData                       *CatalogTax                             `json:"tax_data,omitempty"`
-	DiscountData                  *CatalogDiscount                        `json:"discount_data,omitempty"`
-	ModifierListData              *CatalogModifierList                    `json:"modifier_list_data,omitempty"`
-	ModifierData                  *CatalogModifier                        `json:"modifier_data,omitempty"`
-	TimePeriodData                *CatalogTimePeriod                      `json:"time_period_data,omitempty"`
-	ProductSetData                *CatalogProductSet                      `json:"product_set_data,omitempty"`
-	PricingRuleData               *CatalogPricingRule                     `json:"pricing_rule_data,omitempty"`
-	ImageData                     *CatalogImage                           `json:"image_data,omitempty"`
-	MeasurementUnitData           *CatalogMeasurementUnit                 `json:"catalog_measurement_unit,omitempty"`
-	SubscriptionPlanData          *CatalogSubscriptionPlan                `json:"catalog_subscription_plan,omitempty"`
-	ItemOptionData                *CatalogItemOption                      `json:"item_option_data,omitempty"`
-	ItemOptionValueData           *CatalogItemOptionValue                 `json:"item_option_value_data,omitempty"`
-	CustomAttributeDefinitionData *CatalogCustomAttributeDefinition       `json:"custom_attribute_definition_data,omitempty"`
-	QuickAmountsSettingsData      *CatalogQuickAmountsSettings            `json:"quick_amounts_settings_data,omitempty"`
+	*catalogObjectAlias
+	Type                          CatalogObjectType                 `json:"type,omitempty"`
+	ItemData                      *CatalogItem                      `json:"item_data,omitempty"`
+	CategoryData                  *CatalogCategory                  `json:"category_data,omitempty"`
+	ItemVariationData             *CatalogItemVariation             `json:"item_variation_data,omitempty"`
+	TaxData                       *CatalogTax                       `json:"tax_data,omitempty"`
+	DiscountData                  *CatalogDiscount                  `json:"discount_data,omitempty"`
+	ModifierListData              *CatalogModifierList              `json:"modifier_list_data,omitempty"`
+	ModifierData                  *CatalogModifier                  `json:"modifier_data,omitempty"`
+	TimePeriodData                *CatalogTimePeriod                `json:"time_period_data,omitempty"`
+	ProductSetData                *CatalogProductSet                `json:"product_set_data,omitempty"`
+	PricingRuleData               *CatalogPricingRule               `json:"pricing_rule_data,omitempty"`
+	ImageData                     *CatalogImage                     `json:"image_data,omitempty"`
+	MeasurementUnitData           *CatalogMeasurementUnit           `json:"catalog_measurement_unit,omitempty"`
+	SubscriptionPlanData          *CatalogSubscriptionPlan          `json:"catalog_subscription_plan,omitempty"`
+	ItemOptionData                *CatalogItemOption                `json:"item_option_data,omitempty"`
+	ItemOptionValueData           *CatalogItemOptionValue           `json:"item_option_value_data,omitempty"`
+	CustomAttributeDefinitionData *CatalogCustomAttributeDefinition `json:"custom_attribute_definition_data,omitempty"`
+	QuickAmountsSettingsData      *CatalogQuickAmountsSettings      `json:"quick_amounts_settings_data,omitempty"`
 }
 
 type catalogObjectType interface {
@@ -66,31 +59,22 @@ type catalogObjectType interface {
 }
 
 type CatalogObject struct {
-	ID                    string
-	UpdatedAt             *time.Time
-	Version               int
-	IsDeleted             bool
-	CustomAttributeValues map[string]*CatalogCustomAttributeValue
-	CatalogV1IDs          []*CatalogV1ID
-	PresentAtAllLocations bool
-	PresentAtLocationIDs  []string
-	AbsentAtLocationIDs   []string
-	ImageID               string
-	CatalogObjectType     catalogObjectType
+	ID                    string                                  `json:"id,omitempty"`
+	UpdatedAt             *time.Time                              `json:"updated_at,omitempty"`
+	Version               int                                     `json:"version,omitempty"`
+	IsDeleted             bool                                    `json:"is_deleted,omitempty"`
+	CustomAttributeValues map[string]*CatalogCustomAttributeValue `json:"custom_attribute_values,omitempty"`
+	CatalogV1IDs          []*CatalogV1ID                          `json:"catalog_v1_ids,omitempty"`
+	PresentAtAllLocations bool                                    `json:"present_at_all_locations,omitempty"`
+	PresentAtLocationIDs  []string                                `json:"present_at_location_ids,omitempty"`
+	AbsentAtLocationIDs   []string                                `json:"absent_at_location_ids,omitempty"`
+	ImageID               string                                  `json:"image_id,omitempty"`
+	CatalogObjectType     catalogObjectType                       `json:"-"`
 }
 
 func (c *CatalogObject) MarshalJSON() ([]byte, error) {
 	cJson := catalogObject{
-		ID:                    c.ID,
-		UpdatedAt:             c.UpdatedAt,
-		Version:               c.Version,
-		IsDeleted:             c.IsDeleted,
-		CustomAttributeValues: c.CustomAttributeValues,
-		CatalogV1IDs:          c.CatalogV1IDs,
-		PresentAtAllLocations: c.PresentAtAllLocations,
-		PresentAtLocationIDs:  c.PresentAtLocationIDs,
-		AbsentAtLocationIDs:   c.AbsentAtLocationIDs,
-		ImageID:               c.ImageID,
+		catalogObjectAlias: (*catalogObjectAlias)(c),
 	}
 	switch t := c.CatalogObjectType.(type) {
 	case *CatalogItem:
@@ -155,21 +139,13 @@ func (c *CatalogObject) MarshalJSON() ([]byte, error) {
 }
 
 func (c *CatalogObject) UnmarshalJSON(data []byte) error {
-	cJson := &catalogObject{}
+	cJson := catalogObject{
+		catalogObjectAlias: (*catalogObjectAlias)(c),
+	}
 	err := json.Unmarshal(data, &cJson)
 	if err != nil {
 		return fmt.Errorf("Error unmarshaling catalog object: %w", err)
 	}
-	c.ID = cJson.ID
-	c.UpdatedAt = cJson.UpdatedAt
-	c.Version = cJson.Version
-	c.IsDeleted = cJson.IsDeleted
-	c.CatalogV1IDs = cJson.CatalogV1IDs
-	c.PresentAtAllLocations = cJson.PresentAtAllLocations
-	c.PresentAtLocationIDs = cJson.PresentAtLocationIDs
-	c.AbsentAtLocationIDs = cJson.AbsentAtLocationIDs
-	c.ImageID = cJson.ImageID
-	c.CustomAttributeValues = cJson.CustomAttributeValues
 
 	switch cJson.Type {
 	case CatalogObjectTypeItem:
