@@ -1,7 +1,7 @@
 package objects
 
 type OrderLineItem struct {
-	Uid                      string                          `json:"uid,omitempty"`
+	UID                      string                          `json:"uid,omitempty"`
 	Name                     string                          `json:"name,omitempty"`
 	Quantity                 string                          `json:"quantity,omitempty"`
 	QuantityUnit             *OrderQuantityUnit              `json:"quantity_unit,omitempty"`

@@ -17,7 +17,7 @@ const (
 )
 
 type OrderLineItemTax struct {
-	Uid             string                `json:"uid,omitempty"`
+	UID             string                `json:"uid,omitempty"`
 	CatalogObjectID string                `json:"catalog_object_id,omitempty"`
 	Name            string                `json:"name,omitempty"`
 	Type            OrderLineItemTaxType  `json:"type,omitempty"`
