@@ -3,94 +3,50 @@ package square
 import (
 	"fmt"
 	"net/http"
-	"net/url"
-	"path"
-)
 
-type Environment int
-
-const (
-	productionEndpoint = "https://connect.squareup.com/v2"
-	sandboxEndpoint    = "https://connect.squareupsandbox.com/v2"
-
-	Production Environment = iota
-	Sandbox
+	"github.com/Houndie/square-go/catalog"
+	"github.com/Houndie/square-go/checkout"
+	"github.com/Houndie/square-go/inventory"
+	"github.com/Houndie/square-go/locations"
+	"github.com/Houndie/square-go/objects"
+	"github.com/Houndie/square-go/orders"
 )
 
 type Client struct {
-	httpClient   *http.Client
-	endpointBase *url.URL
+	Catalog   catalog.Client
+	Checkout  checkout.Client
+	Inventory inventory.Client
+	Locations locations.Client
+	Orders    orders.Client
 }
 
-func NewClient(apiKey string, environment Environment, httpClient *http.Client) (*Client, error) {
-	var endpoint string
-	switch environment {
-	case Production:
-		endpoint = productionEndpoint
-	case Sandbox:
-		endpoint = sandboxEndpoint
-	default:
-		return nil, fmt.Errorf("unknown environment")
-	}
-	u, err := url.Parse(endpoint)
+func NewClient(apiKey string, environment objects.Environment, httpClient *http.Client) (*Client, error) {
+	catalog, err := catalog.NewClient(apiKey, environment, httpClient)
 	if err != nil {
-		return nil, fmt.Errorf("error parsing endpoint url: %w", err)
+		return nil, fmt.Errorf("error constructing catalog client: %w", err)
 	}
-	if httpClient == nil {
-		return &Client{
-			endpointBase: u,
-			httpClient: &http.Client{
-				Transport: &middleware{
-					apiKey: apiKey,
-					wrap:   http.DefaultTransport,
-				},
-			},
-		}, nil
+	checkout, err := checkout.NewClient(apiKey, environment, httpClient)
+	if err != nil {
+		return nil, fmt.Errorf("error constructing catalog client: %w", err)
+	}
+	inventory, err := inventory.NewClient(apiKey, environment, httpClient)
+	if err != nil {
+		return nil, fmt.Errorf("error constructing catalog client: %w", err)
+	}
+	locations, err := locations.NewClient(apiKey, environment, httpClient)
+	if err != nil {
+		return nil, fmt.Errorf("error constructing catalog client: %w", err)
+	}
+	orders, err := orders.NewClient(apiKey, environment, httpClient)
+	if err != nil {
+		return nil, fmt.Errorf("error constructing catalog client: %w", err)
 	}
 
-	var transport http.RoundTripper
-	if httpClient.Transport == nil {
-		transport = &middleware{
-			apiKey: apiKey,
-			wrap:   http.DefaultTransport,
-		}
-	} else {
-		transport = &middleware{
-			apiKey: apiKey,
-			wrap:   httpClient.Transport,
-		}
-	}
 	return &Client{
-		endpointBase: u,
-		httpClient: &http.Client{
-			Transport:     transport,
-			CheckRedirect: httpClient.CheckRedirect,
-			Jar:           httpClient.Jar,
-			Timeout:       httpClient.Timeout,
-		},
+		Catalog:   catalog,
+		Checkout:  checkout,
+		Inventory: inventory,
+		Locations: locations,
+		Orders:    orders,
 	}, nil
-}
-
-type middleware struct {
-	apiKey string
-	wrap   http.RoundTripper
-}
-
-func (m middleware) RoundTrip(r *http.Request) (*http.Response, error) {
-	r.Header.Add("Authorization", "Bearer "+m.apiKey)
-	r.Header.Add("Accept", "application/json")
-	if r.Method == "POST" {
-		r.Header.Add("Content-Type", "application/json")
-	}
-	return m.wrap.RoundTrip(r)
-}
-
-func (c *Client) endpoint(e string) *url.URL {
-	u := &url.URL{
-		Scheme: c.endpointBase.Scheme,
-		User:   c.endpointBase.User,
-		Host:   c.endpointBase.Host,
-		Path:   path.Join(c.endpointBase.Path, e),
-	}
-	return u
 }
