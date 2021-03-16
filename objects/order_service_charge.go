@@ -8,7 +8,7 @@ const (
 )
 
 type OrderServiceCharge struct {
-	Uid              string                             `json:"uid,omitempty"`
+	UID              string                             `json:"uid,omitempty"`
 	Name             string                             `json:"name,omitempty"`
 	CatalogObjectID  string                             `json:"catalog_object_id,omitempty"`
 	Percentage       string                             `json:"percentage,omitempty"`
@@ -18,5 +18,6 @@ type OrderServiceCharge struct {
 	TotalTaxMoney    *Money                             `json:"total_tax_money,omitempty"`
 	CalculationPhase OrderServiceChargeCalculationPhase `json:"calculation_phase,omitempty"`
 	Taxable          bool                               `json:"taxable,omitempty"`
-	Taxes            []*OrderLineItemTax                `json:"taxes,omitempty"`
+	AppliedTaxes     []*OrderLineItemAppliedTax         `json:"applied_taxes,omitempty"`
+	Metadata         map[string]string                  `json:"metadata,omitempty"`
 }

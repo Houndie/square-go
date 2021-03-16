@@ -23,4 +23,7 @@ type Card struct {
 	CardholderName string    `json:"cardholder_name,omitempty"`
 	BillingAddress Address   `json:"address,omitempty"`
 	Fingerprint    string    `json:"fingerprint,omitempty"`
+	CardType       string    `json:"card_type,omitempty"`
+	PrepaidType    string    `json:"prepaid_type,omitempty"`
+	Bin            string    `json:"bin,omitempty"`
 }

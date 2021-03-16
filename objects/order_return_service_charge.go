@@ -1,8 +1,8 @@
 package objects
 
 type OrderReturnServiceCharge struct {
-	Uid                    string                             `json:"uid,omitempty"`
-	SourceServiceChargeUid string                             `json:"source_service_charge_uid,omitempty"`
+	UID                    string                             `json:"uid,omitempty"`
+	SourceServiceChargeUID string                             `json:"source_service_charge_uid,omitempty"`
 	Name                   string                             `json:"name,omitempty"`
 	CatalogObjectID        string                             `json:"catalog_object_id,omitempty"`
 	Percentage             string                             `json:"percentage,omitempty"`
@@ -12,5 +12,5 @@ type OrderReturnServiceCharge struct {
 	TotalTaxMoney          *Money                             `json:"total_tax_money,omitempty"`
 	CalculationPhase       OrderServiceChargeCalculationPhase `json:"calculation_phase,omitempty"`
 	Taxable                bool                               `json:"taxable,omitempty"`
-	ReturnTaxes            []*OrderReturnTax                  `json:"return_taxes,omitempty"`
+	AppliedTaxes           []*OrderLineItemAppliedTax         `json:"applied_taxes,omitempty"`
 }

@@ -16,7 +16,10 @@ const (
 )
 
 type OrderFulfillment struct {
-	Type          OrderFulfillmentType           `json:"type,omitempty"`
-	State         OrderFulfillmentState          `json:"state,omitempty"`
-	PickupDetails *OrderFulfillmentPickupDetails `json:"pickup_details,omitempty"`
+	UID             string                           `json:"type,omitempty"`
+	Type            OrderFulfillmentType             `json:"type,omitempty"`
+	State           OrderFulfillmentState            `json:"state,omitempty"`
+	Metadata        map[string]string                `json:"metadata,omitempty"`
+	PickupDetails   *OrderFulfillmentPickupDetails   `json:"pickup_details,omitempty"`
+	ShipmentDetails *OrderFulfillmentShipmentDetails `json:"shipment_details,omitempty"`
 }

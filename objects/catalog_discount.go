@@ -33,10 +33,11 @@ func (*CatalogDiscountVariablePercentage) isCatalogDiscountType() {}
 func (*CatalogDiscountVariableAmount) isCatalogDiscountType()     {}
 
 type CatalogDiscount struct {
-	Name         string
-	DiscountType CatalogDiscountType
-	PinRequired  bool
-	LabelColor   string
+	Name           string
+	DiscountType   CatalogDiscountType
+	PinRequired    bool
+	LabelColor     string
+	ModifyTaxBasis string
 }
 
 func (*CatalogDiscount) isCatalogObjectType() {}
@@ -51,19 +52,21 @@ const (
 )
 
 type catalogDiscount struct {
-	Name         string              `json:"name,omitempty"`
-	DiscountType catalogDiscountType `json:"discount_type,omitempty"`
-	Percentage   string              `json:"percentage,omitempty"`
-	AmountMoney  *Money              `json:"amount_money,omitempty"`
-	PinRequired  bool                `json:"pin_required,omitempty"`
-	LabelColor   string              `json:"label_color,omitempty"`
+	Name           string              `json:"name,omitempty"`
+	DiscountType   catalogDiscountType `json:"discount_type,omitempty"`
+	Percentage     string              `json:"percentage,omitempty"`
+	AmountMoney    *Money              `json:"amount_money,omitempty"`
+	PinRequired    bool                `json:"pin_required,omitempty"`
+	LabelColor     string              `json:"label_color,omitempty"`
+	ModifyTaxBasis string              `json:"modify_tax_basis,omitempty"`
 }
 
 func (c *CatalogDiscount) MarshalJSON() ([]byte, error) {
 	jsonType := catalogDiscount{
-		Name:        c.Name,
-		PinRequired: c.PinRequired,
-		LabelColor:  c.LabelColor,
+		Name:           c.Name,
+		PinRequired:    c.PinRequired,
+		LabelColor:     c.LabelColor,
+		ModifyTaxBasis: c.ModifyTaxBasis,
 	}
 	switch d := c.DiscountType.(type) {
 	case *CatalogDiscountFixedPercentage:
@@ -99,6 +102,7 @@ func (c *CatalogDiscount) UnmarshalJSON(b []byte) error {
 	c.Name = jsonType.Name
 	c.PinRequired = jsonType.PinRequired
 	c.LabelColor = jsonType.LabelColor
+	c.ModifyTaxBasis = jsonType.ModifyTaxBasis
 
 	switch jsonType.DiscountType {
 	case catalogDiscountTypeFixedPercentage:

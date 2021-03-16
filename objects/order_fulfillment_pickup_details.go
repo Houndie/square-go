@@ -9,21 +9,23 @@ import (
 )
 
 type orderFulfillmentPickupDetails struct {
-	Recipient            *OrderFulfillmentRecipient `json:"recipient,omitempty"`
-	ExpiresAt            *time.Time                 `json:"expires_at,omitempty"`
-	AutoCompleteDuration string                     `json:"auto_complete_duration,omitempty"`
-	PickupAt             *time.Time                 `json:"pickup_at,omitempty"`
-	PickupWindowDuration string                     `json:"pickup_window_duration,omitempty"`
-	PrepTimeDuration     string                     `json:"prep_time_duration,omitempty"`
-	Note                 string                     `json:"note,omitempty"`
-	PlacedAt             *time.Time                 `json:"placed_at,omitempty"`
-	AcceptedAt           *time.Time                 `json:"accepted_at,omitempty"`
-	RejectedAt           *time.Time                 `json:"rejected_at,omitempty"`
-	ReadyAt              *time.Time                 `json:"ready_at,omitempty"`
-	ExpiredAt            *time.Time                 `json:"expired_at,omitempty"`
-	PickedUpAt           *time.Time                 `json:"picked_up_at,omitempty"`
-	CanceledAt           *time.Time                 `json:"canceled_at,omitempty"`
-	CancelReason         string                     `json:"cancel_reason,omitempty"`
+	Recipient             *OrderFulfillmentRecipient                          `json:"recipient,omitempty"`
+	ExpiresAt             *time.Time                                          `json:"expires_at,omitempty"`
+	AutoCompleteDuration  string                                              `json:"auto_complete_duration,omitempty"`
+	PickupAt              *time.Time                                          `json:"pickup_at,omitempty"`
+	PickupWindowDuration  string                                              `json:"pickup_window_duration,omitempty"`
+	PrepTimeDuration      string                                              `json:"prep_time_duration,omitempty"`
+	Note                  string                                              `json:"note,omitempty"`
+	PlacedAt              *time.Time                                          `json:"placed_at,omitempty"`
+	AcceptedAt            *time.Time                                          `json:"accepted_at,omitempty"`
+	RejectedAt            *time.Time                                          `json:"rejected_at,omitempty"`
+	ReadyAt               *time.Time                                          `json:"ready_at,omitempty"`
+	ExpiredAt             *time.Time                                          `json:"expired_at,omitempty"`
+	PickedUpAt            *time.Time                                          `json:"picked_up_at,omitempty"`
+	CanceledAt            *time.Time                                          `json:"canceled_at,omitempty"`
+	CancelReason          string                                              `json:"cancel_reason,omitempty"`
+	IsCurbsidePickup      bool                                                `json:"is_curbside_pickup,omitempty"`
+	CurbsidePickupDetails *OrderFulfillmentPickupDetailsCurbsidePickupDetails `json:"curbside_pickup_details,omitempty"`
 }
 
 type OrderFulfillmentPickupDetails struct {
@@ -42,6 +44,16 @@ type OrderFulfillmentPickupDetails struct {
 	PickedUpAt           *time.Time
 	CanceledAt           *time.Time
 	CancelReason         string
+	CurbsidePickup       *OrderFulfillmentPickupDetailsCurbsidePickup
+}
+
+type OrderFulfillmentPickupDetailsCurbsidePickup struct {
+	Details *OrderFulfillmentPickupDetailsCurbsidePickupDetails
+}
+
+type OrderFulfillmentPickupDetailsCurbsidePickupDetails struct {
+	BuyerArrivedAt  *time.Time `json:"buyer_arrived_at,omitempty"`
+	CurbsideDetails string     `json:"curbside_details,omitempty"`
 }
 
 func (o *OrderFulfillmentPickupDetails) MarshalJSON() ([]byte, error) {
@@ -68,6 +80,12 @@ func (o *OrderFulfillmentPickupDetails) MarshalJSON() ([]byte, error) {
 	if o.PrepTimeDuration != nil {
 		jsonType.PrepTimeDuration = fmt.Sprintf("%vS", o.PrepTimeDuration.Seconds())
 	}
+	if o.CurbsidePickup != nil {
+		jsonType.IsCurbsidePickup = true
+		if o.CurbsidePickup.Details != nil {
+			jsonType.CurbsidePickupDetails = o.CurbsidePickup.Details
+		}
+	}
 	return json.Marshal(&jsonType)
 }
 
@@ -90,6 +108,13 @@ func (o *OrderFulfillmentPickupDetails) UnmarshalJSON(b []byte) error {
 	o.PickedUpAt = jsonType.PickedUpAt
 	o.CanceledAt = jsonType.CanceledAt
 	o.CancelReason = jsonType.CancelReason
+
+	if jsonType.IsCurbsidePickup {
+		o.CurbsidePickup = &OrderFulfillmentPickupDetailsCurbsidePickup{}
+		if jsonType.CurbsidePickupDetails != nil {
+			o.CurbsidePickup.Details = jsonType.CurbsidePickupDetails
+		}
+	}
 
 	if jsonType.AutoCompleteDuration != "" {
 		d, err := duration.Parse(jsonType.AutoCompleteDuration)

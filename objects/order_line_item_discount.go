@@ -33,6 +33,9 @@ type orderLineItemDiscount struct {
 	AmountMoney     *Money                     `json:"amount_money,omitempty"`
 	AppliedMoney    *Money                     `json:"applied_money,omitempty"`
 	Scope           OrderLineItemDiscountScope `json:"scope,omitempty"`
+	Metadata        map[string]string          `json:"metadata,omitempty"`
+	RewardIDs       []string                   `json:"reward_ids,omitempty"`
+	PricingRuleID   string                     `json:"pricing_rule_id,omitempty"`
 }
 
 type OrderLineItemDiscountType interface {
@@ -70,6 +73,9 @@ type OrderLineItemDiscount struct {
 	Type            OrderLineItemDiscountType
 	AppliedMoney    *Money
 	Scope           OrderLineItemDiscountScope
+	Metadata        map[string]string
+	RewardIDs       []string
+	PricingRuleID   string
 }
 
 func (o *OrderLineItemDiscount) MarshalJSON() ([]byte, error) {
@@ -79,6 +85,9 @@ func (o *OrderLineItemDiscount) MarshalJSON() ([]byte, error) {
 		Name:            o.Name,
 		AppliedMoney:    o.AppliedMoney,
 		Scope:           o.Scope,
+		Metadata:        o.Metadata,
+		RewardIDs:       o.RewardIDs,
+		PricingRuleID:   o.PricingRuleID,
 	}
 
 	switch t := o.Type.(type) {
@@ -117,6 +126,9 @@ func (o *OrderLineItemDiscount) UnmarshalJSON(input []byte) error {
 	o.Name = jsonData.Name
 	o.AppliedMoney = jsonData.AppliedMoney
 	o.Scope = jsonData.Scope
+	o.Metadata = jsonData.Metadata
+	o.RewardIDs = jsonData.RewardIDs
+	o.PricingRuleID = jsonData.PricingRuleID
 	switch jsonData.Type {
 	case orderLineItemDiscountTypeUnknownDiscount:
 		o.Type = &OrderLineItemDiscountUnknownDiscount{}

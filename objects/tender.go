@@ -22,6 +22,7 @@ type tender struct {
 	CardDetails          *TenderCardDetails     `json:"card_details,omitempty"`
 	CashDetails          *TenderCashDetails     `json:"cash_details,omitempty"`
 	AdditionalRecipients []*AdditionalRecipient `json:"additional_recipients,omitempty"`
+	PaymentID            string                 `json:"payment_id,omitempty"`
 }
 
 type tenderType interface {
@@ -50,6 +51,7 @@ type Tender struct {
 	CustomerID           string
 	Type                 tenderType
 	AdditionalRecipients []*AdditionalRecipient
+	PaymentID            string
 }
 
 type TenderType string
@@ -75,6 +77,7 @@ func (t *Tender) MarshalJSON() ([]byte, error) {
 		ProcessingFeeMoney:   t.ProcessingFeeMoney,
 		CustomerID:           t.CustomerID,
 		AdditionalRecipients: t.AdditionalRecipients,
+		PaymentID:            t.PaymentID,
 	}
 
 	switch details := t.Type.(type) {
@@ -116,6 +119,7 @@ func (t *Tender) UnmarshalJSON(b []byte) error {
 	t.ProcessingFeeMoney = tJson.ProcessingFeeMoney
 	t.CustomerID = tJson.CustomerID
 	t.AdditionalRecipients = tJson.AdditionalRecipients
+	t.PaymentID = tJson.PaymentID
 
 	switch tJson.Type {
 	case tenderTypeCard:

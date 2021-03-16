@@ -1,7 +1,7 @@
 package objects
 
 type OrderReturn struct {
-	Uid                  string                      `json:"uid,omitempty"`
+	UID                  string                      `json:"uid,omitempty"`
 	SourceOrderID        string                      `json:"source_order_id,omitempty"`
 	ReturnLineItems      []*OrderReturnLineItem      `json:"return_line_items,omitempty"`
 	ReturnServiceCharges []*OrderReturnServiceCharge `json:"return_service_charges,omitempty"`

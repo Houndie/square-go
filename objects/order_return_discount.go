@@ -2,7 +2,7 @@ package objects
 
 type OrderReturnDiscount struct {
 	Uid               string                     `json:"uid,omitempty"`
-	SourceDiscountUid string                     `json:"source_discount_uid,omitempty"`
+	SourceDiscountUID string                     `json:"source_discount_uid,omitempty"`
 	CatalogObjectID   string                     `json:"catalog_object_id,omitempty"`
 	Name              string                     `json:"name,omitempty"`
 	Type              OrderLineItemDiscountType  `json:"type,omitempty"`

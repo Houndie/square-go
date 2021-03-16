@@ -24,6 +24,7 @@ type CatalogItem struct {
 	Variations              []*CatalogObject               `json:"variations,omitempty"`
 	ProductType             CatalogItemProductType         `json:"product_type,omitempty"`
 	SkipModifierScreen      bool                           `json:"skip_modifier_screen,omitempty"`
+	ItemOptions             []*CatalogItemOptionForItem    `json:"item_options,omitempty"`
 }
 
 func (*CatalogItem) isCatalogObjectType() {}

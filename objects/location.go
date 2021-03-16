@@ -35,12 +35,16 @@ type Location struct {
 	PhoneNumber       string               `json:"phone_number,omitempty"`
 	BusinessName      string               `json:"business_name,omitempty"`
 	Type              LocationType         `json:"type,omitempty"`
-	WebsiteUrl        string               `json:"website_url,omitempty"`
+	WebsiteURL        string               `json:"website_url,omitempty"`
 	BusinessHours     *BusinessHours       `json:"business_hours,omitempty"`
 	BusinessEmail     string               `json:"business_email,omitempty"`
 	Description       string               `json:"description",omitempty`
 	TwitterUsername   string               `json:"twitter_username,omitempty"`
 	InstagramUsername string               `json:"instagram_username,omitempty"`
-	FacebookUrl       string               `json:"facebook_url,omitempty"`
+	FacebookURL       string               `json:"facebook_url,omitempty"`
 	Coordinates       *Coordinates         `json:"coordinates,omitempty"`
+	LogoURL           string               `json:"logo_url,omitempty"`
+	POSBackgroundURL  string               `json:"pos_background_url,omitempty"`
+	MCC               string               `json:"mcc,omitempty"`
+	FullFormatLogoURL string               `json:"full_format_logo_url,omitempty"`
 }

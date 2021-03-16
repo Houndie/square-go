@@ -13,7 +13,7 @@ type InventoryTransfer struct {
 	Quantity          string             `json:"quanity,omitempty"`
 	ReferenceID       string             `json:"reference_id",omitempty"`
 	Source            *SourceApplication `json:"source,omitempty"`
-	state             InventoryState     `json:"state,omitempty"`
+	State             InventoryState     `json:"state,omitempty"`
 	ToLocationID      string             `json:"to_location_id,omitempty"`
 }
 

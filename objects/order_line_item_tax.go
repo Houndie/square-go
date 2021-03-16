@@ -22,6 +22,7 @@ type OrderLineItemTax struct {
 	Name            string                `json:"name,omitempty"`
 	Type            OrderLineItemTaxType  `json:"type,omitempty"`
 	Percentage      string                `json:"percentage,omitempty"`
+	Metadata        map[string]string     `json:"metadata,omitempty"`
 	AppliedMoney    *Money                `json:"applied_money,omitempty"`
 	Scope           OrderLineItemTaxScope `json:"scope,omitempty"`
 }
