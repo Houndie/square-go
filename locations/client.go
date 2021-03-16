@@ -1,6 +1,7 @@
 package locations
 
 import (
+	"context"
 	"net/http"
 
 	"github.com/Houndie/square-go/internal"
@@ -8,6 +9,7 @@ import (
 )
 
 type Client interface {
+	List(ctx context.Context) ([]*objects.Location, error)
 }
 
 type client struct {
