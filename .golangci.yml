@@ -1,0 +1,54 @@
+linters-settings:
+  goconst:
+    ignore-tests: true
+linters:
+  disable-all: true
+  enable:
+    - deadcode
+    - errcheck
+    - gosimple
+    - govet
+    - ineffassign
+    - staticcheck
+    - structcheck
+    - typecheck
+    - unused
+    - varcheck
+    - bodyclose
+    - dogsled
+    - dupl
+    - durationcheck
+    - errorlint
+    - exhaustive
+    - exportloopref
+    - forbidigo
+    - forcetypeassert
+    - goconst
+    - gocritic
+    - godot
+    - godox
+    - goheader
+    - goimports
+    - golint
+    - gomnd
+    - goprintffuncname
+    - makezero
+    - misspell
+    - nakedret
+    - nestif
+    - nilerr
+    - noctx
+    - nolintlint
+    - paralleltest
+    - prealloc
+    - predeclared
+    - revive
+    - stylecheck
+    - thelper
+    - tparallel
+    - unconvert
+    - unparam
+    - wastedassign
+    - whitespace
+    - wrapcheck
+    - wsl

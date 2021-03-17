@@ -58,46 +58,50 @@ const (
 )
 
 func (t *Tender) MarshalJSON() ([]byte, error) {
-	tJson := tender{
+	tJSON := tender{
 		tenderAlias: (*tenderAlias)(t),
 	}
 
 	switch details := t.Type.(type) {
 	case *TenderCardDetails:
-		tJson.Type = tenderTypeCard
-		tJson.CardDetails = details
+		tJSON.Type = tenderTypeCard
+		tJSON.CardDetails = details
 	case *TenderCashDetails:
-		tJson.Type = tenderTypeCash
-		tJson.CashDetails = details
+		tJSON.Type = tenderTypeCash
+		tJSON.CashDetails = details
 	case *ThirdPartyCardDetails:
-		tJson.Type = tenderTypeThirdPartyCard
+		tJSON.Type = tenderTypeThirdPartyCard
 	case *SquareGiftCardDetails:
-		tJson.Type = tenderTypeSquareGiftCard
+		tJSON.Type = tenderTypeSquareGiftCard
 	case *NoSaleDetails:
-		tJson.Type = tenderTypeNoSale
+		tJSON.Type = tenderTypeNoSale
 	case *OtherTenderTypeDetails:
-		tJson.Type = tenderTypeOther
+		tJSON.Type = tenderTypeOther
 	default:
-		return nil, errors.New("Found unknown tender type")
+		return nil, errors.New("found unknown tender type")
 	}
 
-	return json.Marshal(tJson)
+	j, err := json.Marshal(tJSON)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling tender: %w", err)
+	}
+
+	return j, nil
 }
 
 func (t *Tender) UnmarshalJSON(b []byte) error {
-	tJson := tender{
+	tJSON := tender{
 		tenderAlias: (*tenderAlias)(t),
 	}
-	err := json.Unmarshal(b, &tJson)
-	if err != nil {
-		return fmt.Errorf("Error unmarshaling Tender json: %w", err)
+	if err := json.Unmarshal(b, &tJSON); err != nil {
+		return fmt.Errorf("error unmarshaling Tender json: %w", err)
 	}
 
-	switch tJson.Type {
+	switch tJSON.Type {
 	case tenderTypeCard:
-		t.Type = tJson.CardDetails
+		t.Type = tJSON.CardDetails
 	case tenderTypeCash:
-		t.Type = tJson.CashDetails
+		t.Type = tJSON.CashDetails
 	case tenderTypeThirdPartyCard:
 		t.Type = &ThirdPartyCardDetails{}
 	case tenderTypeSquareGiftCard:
@@ -107,7 +111,8 @@ func (t *Tender) UnmarshalJSON(b []byte) error {
 	case tenderTypeOther:
 		t.Type = &OtherTenderTypeDetails{}
 	default:
-		return errors.New("Unknown tender type found")
+		return errors.New("unknown tender type found")
 	}
+
 	return nil
 }

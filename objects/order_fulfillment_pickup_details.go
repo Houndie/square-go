@@ -51,21 +51,26 @@ func (o *OrderFulfillmentPickupDetails) MarshalJSON() ([]byte, error) {
 	jsonType := orderFulfillmentPickupDetails{
 		orderFulfillmentPickupDetailsAlias: (*orderFulfillmentPickupDetailsAlias)(o),
 	}
+
 	if o.AutoCompleteDuration != nil {
 		jsonType.AutoCompleteDuration = fmt.Sprintf("%vS", o.AutoCompleteDuration.Seconds())
 	}
+
 	if o.PickupWindowDuration != nil {
 		jsonType.PickupWindowDuration = fmt.Sprintf("%vS", o.PickupWindowDuration.Seconds())
 	}
+
 	if o.PrepTimeDuration != nil {
 		jsonType.PrepTimeDuration = fmt.Sprintf("%vS", o.PrepTimeDuration.Seconds())
 	}
+
 	if o.CurbsidePickup != nil {
 		jsonType.IsCurbsidePickup = true
 		if o.CurbsidePickup.Details != nil {
 			jsonType.CurbsidePickupDetails = o.CurbsidePickup.Details
 		}
 	}
+
 	return json.Marshal(&jsonType)
 }
 
@@ -73,8 +78,7 @@ func (o *OrderFulfillmentPickupDetails) UnmarshalJSON(b []byte) error {
 	jsonType := orderFulfillmentPickupDetails{
 		orderFulfillmentPickupDetailsAlias: (*orderFulfillmentPickupDetailsAlias)(o),
 	}
-	err := json.Unmarshal(b, &jsonType)
-	if err != nil {
+	if err := json.Unmarshal(b, &jsonType); err != nil {
 		return fmt.Errorf("Error unmarshaling OrderFulfillmentPickupDetails: %w", err)
 	}
 
@@ -90,6 +94,7 @@ func (o *OrderFulfillmentPickupDetails) UnmarshalJSON(b []byte) error {
 		if err != nil {
 			return fmt.Errorf("Error unmarshaling OrderFulfillmentPickupDetails.AutoCompleteDuration: %w", err)
 		}
+
 		o.AutoCompleteDuration = &d
 	}
 
@@ -98,6 +103,7 @@ func (o *OrderFulfillmentPickupDetails) UnmarshalJSON(b []byte) error {
 		if err != nil {
 			return fmt.Errorf("Error unmarshaling OrderFulfillmentPickupDetails.PickupWindowDuration: %w", err)
 		}
+
 		o.PickupWindowDuration = &d
 	}
 
@@ -106,7 +112,9 @@ func (o *OrderFulfillmentPickupDetails) UnmarshalJSON(b []byte) error {
 		if err != nil {
 			return fmt.Errorf("Error unmarshaling OrderFulfillmentPickupDetails.PrepTimeDuration: %w", err)
 		}
+
 		o.PrepTimeDuration = &d
 	}
+
 	return nil
 }

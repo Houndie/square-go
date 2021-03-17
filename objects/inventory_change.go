@@ -29,43 +29,46 @@ type inventoryChange struct {
 }
 
 func (c *InventoryChange) MarshalJSON() ([]byte, error) {
-	toJson := &inventoryChange{}
+	toJSON := &inventoryChange{}
 	switch t := c.Type.(type) {
 	case *InventoryAdjustment:
-		toJson.Adjustment = t
-		toJson.Type = inventoryChangeTypeAdjustment
+		toJSON.Adjustment = t
+		toJSON.Type = inventoryChangeTypeAdjustment
 	case *InventoryPhysicalCount:
-		toJson.PhysicalCount = t
-		toJson.Type = inventoryChangeTypePhysicalCount
+		toJSON.PhysicalCount = t
+		toJSON.Type = inventoryChangeTypePhysicalCount
 	case *InventoryTransfer:
-		toJson.Transfer = t
-		toJson.Type = inventoryChangeTypeTransfer
+		toJSON.Transfer = t
+		toJSON.Type = inventoryChangeTypeTransfer
 	default:
 		return nil, fmt.Errorf("unknown inventory type: %T", c.Type)
 	}
 
-	b, err := json.Marshal(&toJson)
+	b, err := json.Marshal(&toJSON)
 	if err != nil {
 		return nil, fmt.Errorf("error marshaling inventory change: %w", err)
 	}
+
 	return b, nil
 }
 
 func (c *InventoryChange) UnmarshalJSON(b []byte) error {
-	fromJson := &inventoryChange{}
-	if err := json.Unmarshal(b, &fromJson); err != nil {
+	fromJSON := &inventoryChange{}
+	if err := json.Unmarshal(b, &fromJSON); err != nil {
 		return fmt.Errorf("error unmarshaling inventory change: %w", err)
 	}
-	switch fromJson.Type {
+
+	switch fromJSON.Type {
 	case inventoryChangeTypePhysicalCount:
-		c.Type = fromJson.PhysicalCount
+		c.Type = fromJSON.PhysicalCount
 		return nil
 	case inventoryChangeTypeAdjustment:
-		c.Type = fromJson.Adjustment
+		c.Type = fromJSON.Adjustment
 		return nil
 	case inventoryChangeTypeTransfer:
-		c.Type = fromJson.Transfer
+		c.Type = fromJSON.Transfer
 		return nil
 	}
-	return fmt.Errorf("unknown type: %s", fromJson.Type)
+
+	return fmt.Errorf("unknown type: %s", fromJSON.Type)
 }

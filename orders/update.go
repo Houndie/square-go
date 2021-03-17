@@ -30,8 +30,9 @@ func (c *client) Update(ctx context.Context, req *UpdateRequest) (*UpdateRespons
 		UpdateResponse: externalRes,
 	}
 
-	if err := c.i.Do(ctx, http.MethodPut, c.i.Endpoint("/locations/"+req.LocationID+"/orders/"+req.OrderID).String(), req, &res); err != nil {
+	if err := c.i.Do(ctx, http.MethodPut, "/locations/"+req.LocationID+"/orders/"+req.OrderID, req, &res); err != nil {
 		return nil, fmt.Errorf("error performing http request: %w", err)
 	}
+
 	return externalRes, nil
 }

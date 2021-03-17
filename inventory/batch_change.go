@@ -31,5 +31,6 @@ func (c *client) BatchChange(ctx context.Context, req *BatchChangeRequest) (*Bat
 	if err := c.i.Do(ctx, http.MethodPost, "inventory/batch-change", req, &res); err != nil {
 		return nil, fmt.Errorf("error performing http request: %w", err)
 	}
+
 	return externalRes, nil
 }

@@ -20,7 +20,8 @@ type client struct {
 func NewClient(apiKey string, environment objects.Environment, httpClient *http.Client) (Client, error) {
 	c, err := internal.NewClient(apiKey, environment, httpClient)
 	if err != nil {
-		return nil, err
+		return nil, err //nolint:wrapcheck
 	}
+
 	return &client{i: c}, nil
 }

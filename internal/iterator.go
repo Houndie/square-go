@@ -28,7 +28,7 @@ func (i *Iterator) Value() int {
 }
 
 func (i *Iterator) Next() bool {
-	i.idx = i.idx + 1
+	i.idx++
 	if i.idx < i.segmentLength {
 		return true
 	}
@@ -39,7 +39,7 @@ func (i *Iterator) Next() bool {
 
 	var err error
 	i.segmentLength, i.cursor, err = i.newSegment(i.cursor)
-	if err != nil {
+	if err != nil { //nolint:wsl
 		i.err = err
 		return false
 	}
@@ -47,9 +47,12 @@ func (i *Iterator) Next() bool {
 	if i.segmentLength == 0 {
 		return false
 	}
+
 	i.idx = 0
+
 	if i.cursor == "" {
 		i.done = true
 	}
+
 	return true
 }

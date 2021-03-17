@@ -38,7 +38,7 @@ type Location struct {
 	WebsiteURL        string               `json:"website_url,omitempty"`
 	BusinessHours     *BusinessHours       `json:"business_hours,omitempty"`
 	BusinessEmail     string               `json:"business_email,omitempty"`
-	Description       string               `json:"description",omitempty`
+	Description       string               `json:"description,omitempty"`
 	TwitterUsername   string               `json:"twitter_username,omitempty"`
 	InstagramUsername string               `json:"instagram_username,omitempty"`
 	FacebookURL       string               `json:"facebook_url,omitempty"`

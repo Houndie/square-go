@@ -16,7 +16,7 @@ const (
 )
 
 type OrderFulfillment struct {
-	UID             string                           `json:"type,omitempty"`
+	UID             string                           `json:"uid,omitempty"`
 	Type            OrderFulfillmentType             `json:"type,omitempty"`
 	State           OrderFulfillmentState            `json:"state,omitempty"`
 	Metadata        map[string]string                `json:"metadata,omitempty"`

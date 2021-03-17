@@ -2,6 +2,7 @@ package objects
 
 import (
 	"encoding/json"
+	"fmt"
 
 	"errors"
 )
@@ -106,9 +107,8 @@ func (o *OrderLineItemDiscount) UnmarshalJSON(input []byte) error {
 	jsonData := orderLineItemDiscount{
 		orderLineItemDiscountAlias: (*orderLineItemDiscountAlias)(o),
 	}
-	err := json.Unmarshal(input, &jsonData)
-	if err != nil {
-		return err
+	if err := json.Unmarshal(input, &jsonData); err != nil {
+		return fmt.Errorf("error unmarshalling order line item discount: %w", err)
 	}
 
 	switch jsonData.Type {

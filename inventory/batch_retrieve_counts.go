@@ -67,5 +67,6 @@ func (c *client) BatchRetrieveCounts(ctx context.Context, req *BatchRetrieveCoun
 		}
 		return len(res.Counts), res.Cursor, nil
 	})
+
 	return iter
 }

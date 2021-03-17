@@ -85,6 +85,7 @@ func (c *CatalogDiscount) MarshalJSON() ([]byte, error) {
 	if err != nil {
 		return nil, fmt.Errorf("error marshing catalog discount: %w", err)
 	}
+
 	return b, nil
 }
 
@@ -92,8 +93,7 @@ func (c *CatalogDiscount) UnmarshalJSON(b []byte) error {
 	jsonType := catalogDiscount{
 		catalogDiscountAlias: (*catalogDiscountAlias)(c),
 	}
-	err := json.Unmarshal(b, &jsonType)
-	if err != nil {
+	if err := json.Unmarshal(b, &jsonType); err != nil {
 		return fmt.Errorf("error unmarshaling catalog discount: %w", err)
 	}
 
@@ -117,5 +117,6 @@ func (c *CatalogDiscount) UnmarshalJSON(b []byte) error {
 	default:
 		return fmt.Errorf("could not unmarshal catalog discount, unknown catalog discount type %s found", jsonType.DiscountType)
 	}
+
 	return nil
 }
