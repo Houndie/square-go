@@ -35,7 +35,7 @@ func (c *client) Create(ctx context.Context, req *CreateRequest) (*CreateRespons
 		CreateResponse: externalRes,
 	}
 
-	if err := c.i.Do(ctx, http.MethodPost, c.i.Endpoint("locations/"+req.LocationID+"/checkouts").String(), req, &res); err != nil {
+	if err := c.i.Do(ctx, http.MethodPost, "locations/"+req.LocationID+"/checkouts", req, &res); err != nil {
 		return nil, fmt.Errorf("error performing http request: %w", err)
 	}
 

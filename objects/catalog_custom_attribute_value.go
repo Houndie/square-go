@@ -39,53 +39,57 @@ type CatalogCustomAttributeValue struct {
 }
 
 func (c *CatalogCustomAttributeValue) MarshalJSON() ([]byte, error) {
-	cJson := catalogCustomAttributeValue{
+	cJSON := catalogCustomAttributeValue{
 		catalogCustomAttributeValueAlias: (*catalogCustomAttributeValueAlias)(c),
 	}
 
 	switch t := c.Type.(type) {
 	case CatalogCustomAttributeValueBoolean:
-		cJson.BooleanValue = bool(t)
-		cJson.Type = catalogCustomAttributeDefinitionTypeBoolean
+		cJSON.BooleanValue = bool(t)
+		cJSON.Type = catalogCustomAttributeDefinitionTypeBoolean
 	case CatalogCustomAttributeValueNumber:
-		cJson.NumberValue = string(t)
-		cJson.Type = catalogCustomAttributeDefinitionTypeNumber
+		cJSON.NumberValue = string(t)
+		cJSON.Type = catalogCustomAttributeDefinitionTypeNumber
 	case CatalogCustomAttributeValueSelection:
-		cJson.SelectionUIDValues = []string(t)
-		cJson.Type = catalogCustomAttributeDefinitionTypeSelection
+		cJSON.SelectionUIDValues = []string(t)
+		cJSON.Type = catalogCustomAttributeDefinitionTypeSelection
 	case CatalogCustomAttributeValueString:
-		cJson.StringValue = string(t)
-		cJson.Type = catalogCustomAttributeDefinitionTypeString
+		cJSON.StringValue = string(t)
+		cJSON.Type = catalogCustomAttributeDefinitionTypeString
 	default:
-		return nil, errors.New("Found unknown custom attribute data type")
+		return nil, errors.New("found unknown custom attribute data type")
 	}
-	json, err := json.Marshal(&cJson)
+
+	json, err := json.Marshal(&cJSON)
 	if err != nil {
-		return nil, fmt.Errorf("Error marshaling json catalog object: %w", err)
+		return nil, fmt.Errorf("error marshaling json catalog object: %w", err)
 	}
+
 	return json, nil
 }
 
 func (c *CatalogCustomAttributeValue) UnmarshalJSON(data []byte) error {
-	cJson := catalogCustomAttributeValue{
+	cJSON := catalogCustomAttributeValue{
 		catalogCustomAttributeValueAlias: (*catalogCustomAttributeValueAlias)(c),
 	}
-	err := json.Unmarshal(data, &cJson)
+
+	err := json.Unmarshal(data, &cJSON)
 	if err != nil {
-		return fmt.Errorf("Error unmarshaling catalog object: %w", err)
+		return fmt.Errorf("error unmarshaling catalog object: %w", err)
 	}
 
-	switch cJson.Type {
+	switch cJSON.Type {
 	case catalogCustomAttributeDefinitionTypeBoolean:
-		c.Type = CatalogCustomAttributeValueBoolean(cJson.BooleanValue)
+		c.Type = CatalogCustomAttributeValueBoolean(cJSON.BooleanValue)
 	case catalogCustomAttributeDefinitionTypeNumber:
-		c.Type = CatalogCustomAttributeValueNumber(cJson.NumberValue)
+		c.Type = CatalogCustomAttributeValueNumber(cJSON.NumberValue)
 	case catalogCustomAttributeDefinitionTypeString:
-		c.Type = CatalogCustomAttributeValueString(cJson.StringValue)
+		c.Type = CatalogCustomAttributeValueString(cJSON.StringValue)
 	case catalogCustomAttributeDefinitionTypeSelection:
-		c.Type = CatalogCustomAttributeValueSelection(cJson.SelectionUIDValues)
+		c.Type = CatalogCustomAttributeValueSelection(cJSON.SelectionUIDValues)
 	default:
-		return fmt.Errorf("Found unknown custom attribute type %s", cJson.Type)
+		return fmt.Errorf("found unknown custom attribute type %s", cJSON.Type)
 	}
+
 	return nil
 }

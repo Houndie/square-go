@@ -1,3 +1,4 @@
+//nolint:goconst
 package checkout
 
 import (
@@ -19,6 +20,8 @@ import (
 )
 
 func TestCreateCheckout(t *testing.T) {
+	t.Parallel()
+
 	locationID := "some location id"
 	idempotencyKey := "some unique key"
 	order := &objects.CreateOrderRequest{
@@ -59,7 +62,7 @@ func TestCreateCheckout(t *testing.T) {
 		LastName:                     "Doe",
 		Organization:                 "Ninjas",
 	}
-	redirectUrl := "www.mywebsite.com"
+	redirectURL := "www.mywebsite.com"
 	additionalRecipients := []*objects.ChargeRequestAdditionalRecipient{
 		&objects.ChargeRequestAdditionalRecipient{
 			LocationID:  "more locations",
@@ -83,7 +86,7 @@ func TestCreateCheckout(t *testing.T) {
 		MerchantSupportEmail:       merchantSupportEmail,
 		PrePopulateBuyerEmail:      prePopulateBuyerEmail,
 		PrePopulateShippingAddress: prePopulateShippingAddress,
-		RedirectURL:                redirectUrl,
+		RedirectURL:                redirectURL,
 		Order:                      order.Order,
 		CreatedAt:                  &createdAt,
 		AdditionalRecipients: []*objects.AdditionalRecipient{
@@ -112,14 +115,14 @@ func TestCreateCheckout(t *testing.T) {
 					t.Fatalf("found wrong authorization header %s", r.Header.Get("Authorization"))
 				}
 
-				reqJson := struct {
+				reqJSON := struct {
 					IdempotencyKey             string                                      `json:"idempotency_key,omitempty"`
 					Order                      *objects.CreateOrderRequest                 `json:"order,omitempty"`
 					AskForShippingAddress      bool                                        `json:"ask_for_shipping_address,omitempty"`
 					MerchantSupportEmail       string                                      `json:"merchant_support_email,omitempty"`
 					PrePopulateBuyerEmail      string                                      `json:"pre_populate_buyer_email,omitempty"`
 					PrePopulateShippingAddress *objects.Address                            `json:"pre_populate_shipping_address,omitempty"`
-					RedirectUrl                string                                      `json:"redirect_url,omitempty"`
+					RedirectURL                string                                      `json:"redirect_url,omitempty"`
 					AdditionalRecipients       []*objects.ChargeRequestAdditionalRecipient `json:"additional_recipients,omitempty"`
 					Note                       string                                      `json:"note,omitempty"`
 				}{
@@ -129,7 +132,7 @@ func TestCreateCheckout(t *testing.T) {
 					MerchantSupportEmail:       merchantSupportEmail,
 					PrePopulateBuyerEmail:      prePopulateBuyerEmail,
 					PrePopulateShippingAddress: prePopulateShippingAddress,
-					RedirectUrl:                redirectUrl,
+					RedirectURL:                redirectURL,
 					AdditionalRecipients:       additionalRecipients,
 					Note:                       note,
 				}
@@ -139,54 +142,54 @@ func TestCreateCheckout(t *testing.T) {
 					t.Fatalf("error reading request body: %v", err)
 				}
 
-				err = json.Unmarshal(reqBody, &reqJson)
+				err = json.Unmarshal(reqBody, &reqJSON)
 				if err != nil {
 					t.Fatalf("error unmarshaling request body: %v", err)
 				}
 
-				if reqJson.IdempotencyKey != idempotencyKey {
-					t.Fatalf("found idepotency key %s, expected %s", reqJson.IdempotencyKey, idempotencyKey)
+				if reqJSON.IdempotencyKey != idempotencyKey {
+					t.Fatalf("found idepotency key %s, expected %s", reqJSON.IdempotencyKey, idempotencyKey)
 				}
 
-				if !cmp.Equal(reqJson.Order, order, cmpopts.IgnoreUnexported()) {
-					t.Fatalf("found order %s not equal to existing order %s", spew.Sdump(reqJson.Order), spew.Sdump(order))
+				if !cmp.Equal(reqJSON.Order, order, cmpopts.IgnoreUnexported()) {
+					t.Fatalf("found order %s not equal to existing order %s", spew.Sdump(reqJSON.Order), spew.Sdump(order))
 				}
 
-				if reqJson.AskForShippingAddress != askForShippingAddress {
-					t.Fatalf("found ask for shipping param %v, expected %v", reqJson.AskForShippingAddress, askForShippingAddress)
+				if reqJSON.AskForShippingAddress != askForShippingAddress {
+					t.Fatalf("found ask for shipping param %v, expected %v", reqJSON.AskForShippingAddress, askForShippingAddress)
 				}
 
-				if reqJson.MerchantSupportEmail != merchantSupportEmail {
-					t.Fatalf("found merchant support email %s, expected %s", reqJson.MerchantSupportEmail, merchantSupportEmail)
+				if reqJSON.MerchantSupportEmail != merchantSupportEmail {
+					t.Fatalf("found merchant support email %s, expected %s", reqJSON.MerchantSupportEmail, merchantSupportEmail)
 				}
 
-				if reqJson.PrePopulateBuyerEmail != prePopulateBuyerEmail {
-					t.Fatalf("found pre populate buyer email %s, expected %s", reqJson.PrePopulateBuyerEmail, prePopulateBuyerEmail)
+				if reqJSON.PrePopulateBuyerEmail != prePopulateBuyerEmail {
+					t.Fatalf("found pre populate buyer email %s, expected %s", reqJSON.PrePopulateBuyerEmail, prePopulateBuyerEmail)
 				}
 
-				if !cmp.Equal(reqJson.PrePopulateShippingAddress, prePopulateShippingAddress, cmpopts.IgnoreUnexported()) {
-					t.Fatalf("found wrong pre populate shipping address %s, expected %s", spew.Sdump(reqJson.PrePopulateShippingAddress), spew.Sdump(prePopulateShippingAddress))
+				if !cmp.Equal(reqJSON.PrePopulateShippingAddress, prePopulateShippingAddress, cmpopts.IgnoreUnexported()) {
+					t.Fatalf("found wrong pre populate shipping address %s, expected %s", spew.Sdump(reqJSON.PrePopulateShippingAddress), spew.Sdump(prePopulateShippingAddress))
 				}
 
-				if reqJson.RedirectUrl != redirectUrl {
-					t.Fatalf("found redirect url %s, expected %s", reqJson.RedirectUrl, redirectUrl)
+				if reqJSON.RedirectURL != redirectURL {
+					t.Fatalf("found redirect url %s, expected %s", reqJSON.RedirectURL, redirectURL)
 				}
 
-				if !cmp.Equal(reqJson.AdditionalRecipients, additionalRecipients, cmpopts.IgnoreUnexported()) {
-					t.Fatalf("found additional recipients %s, expected %s", spew.Sdump(reqJson.AdditionalRecipients), spew.Sdump(additionalRecipients))
+				if !cmp.Equal(reqJSON.AdditionalRecipients, additionalRecipients, cmpopts.IgnoreUnexported()) {
+					t.Fatalf("found additional recipients %s, expected %s", spew.Sdump(reqJSON.AdditionalRecipients), spew.Sdump(additionalRecipients))
 				}
 
-				if reqJson.Note != note {
-					t.Fatalf("found note %s, expected %s", reqJson.Note, note)
+				if reqJSON.Note != note {
+					t.Fatalf("found note %s, expected %s", reqJSON.Note, note)
 				}
 
-				resJson := struct {
+				resJSON := struct {
 					Checkout *objects.Checkout `json:"checkout"`
 				}{
 					Checkout: expectedCheckout,
 				}
 
-				resBody, err := json.Marshal(&resJson)
+				resBody, err := json.Marshal(&resJSON)
 				if err != nil {
 					t.Fatalf("error marshaling response body: %v", err)
 				}
@@ -222,7 +225,7 @@ func TestCreateCheckout(t *testing.T) {
 		MerchantSupportEmail:       merchantSupportEmail,
 		PrePopulateBuyerEmail:      prePopulateBuyerEmail,
 		PrePopulateShippingAddress: prePopulateShippingAddress,
-		RedirectURL:                redirectUrl,
+		RedirectURL:                redirectURL,
 		AdditionalRecipients:       additionalRecipients,
 		Note:                       note,
 	})
@@ -236,6 +239,8 @@ func TestCreateCheckout(t *testing.T) {
 }
 
 func TestCreateCheckoutClientError(t *testing.T) {
+	t.Parallel()
+
 	locationID := "some location id"
 	idempotencyKey := "some unique key"
 	order := &objects.CreateOrderRequest{
@@ -276,7 +281,7 @@ func TestCreateCheckoutClientError(t *testing.T) {
 		LastName:                     "Doe",
 		Organization:                 "Ninjas",
 	}
-	redirectUrl := "www.mywebsite.com"
+	redirectURL := "www.mywebsite.com"
 	additionalRecipients := []*objects.ChargeRequestAdditionalRecipient{
 		&objects.ChargeRequestAdditionalRecipient{
 			LocationID:  "more locations",
@@ -303,6 +308,7 @@ func TestCreateCheckoutClientError(t *testing.T) {
 	if err != nil {
 		t.Fatalf("error creating square client: %v", err)
 	}
+
 	_, err = squareClient.Create(context.Background(), &CreateRequest{
 		LocationID:                 locationID,
 		IdempotencyKey:             idempotencyKey,
@@ -311,17 +317,18 @@ func TestCreateCheckoutClientError(t *testing.T) {
 		MerchantSupportEmail:       merchantSupportEmail,
 		PrePopulateBuyerEmail:      prePopulateBuyerEmail,
 		PrePopulateShippingAddress: prePopulateShippingAddress,
-		RedirectURL:                redirectUrl,
+		RedirectURL:                redirectURL,
 		AdditionalRecipients:       additionalRecipients,
 		Note:                       note,
 	})
-
 	if err == nil {
 		t.Fatal("found no error when client returned one?")
 	}
 }
 
 func TestCreateCheckoutErrorCode(t *testing.T) {
+	t.Parallel()
+
 	locationID := "some location id"
 	idempotencyKey := "some unique key"
 	order := &objects.CreateOrderRequest{
@@ -362,7 +369,7 @@ func TestCreateCheckoutErrorCode(t *testing.T) {
 		LastName:                     "Doe",
 		Organization:                 "Ninjas",
 	}
-	redirectUrl := "www.mywebsite.com"
+	redirectURL := "www.mywebsite.com"
 	additionalRecipients := []*objects.ChargeRequestAdditionalRecipient{
 		&objects.ChargeRequestAdditionalRecipient{
 			LocationID:  "more locations",
@@ -398,6 +405,7 @@ func TestCreateCheckoutErrorCode(t *testing.T) {
 	if err != nil {
 		t.Fatalf("error creating square client: %v", err)
 	}
+
 	_, err = squareClient.Create(context.Background(), &CreateRequest{
 		LocationID:                 locationID,
 		IdempotencyKey:             idempotencyKey,
@@ -406,7 +414,7 @@ func TestCreateCheckoutErrorCode(t *testing.T) {
 		MerchantSupportEmail:       merchantSupportEmail,
 		PrePopulateBuyerEmail:      prePopulateBuyerEmail,
 		PrePopulateShippingAddress: prePopulateShippingAddress,
-		RedirectURL:                redirectUrl,
+		RedirectURL:                redirectURL,
 		AdditionalRecipients:       additionalRecipients,
 		Note:                       note,
 	})
@@ -426,6 +434,8 @@ func TestCreateCheckoutErrorCode(t *testing.T) {
 }
 
 func TestCreateCheckoutErrorMessage(t *testing.T) {
+	t.Parallel()
+
 	locationID := "some location id"
 	idempotencyKey := "some unique key"
 	order := &objects.CreateOrderRequest{
@@ -466,7 +476,7 @@ func TestCreateCheckoutErrorMessage(t *testing.T) {
 		LastName:                     "Doe",
 		Organization:                 "Ninjas",
 	}
-	redirectUrl := "www.mywebsite.com"
+	redirectURL := "www.mywebsite.com"
 	additionalRecipients := []*objects.ChargeRequestAdditionalRecipient{
 		&objects.ChargeRequestAdditionalRecipient{
 			LocationID:  "more locations",
@@ -482,7 +492,7 @@ func TestCreateCheckoutErrorMessage(t *testing.T) {
 	apiKey := "some key"
 
 	testError := &objects.Error{
-		Category: objects.ErrorCategoryApiError,
+		Category: objects.ErrorCategoryAPIError,
 		Code:     objects.ErrorCodeInternalServerError,
 		Detail:   "some detail",
 		Field:    "some field",
@@ -497,7 +507,7 @@ func TestCreateCheckoutErrorMessage(t *testing.T) {
 					Errors: []*objects.Error{testError},
 				}
 
-				respJson, err := json.Marshal(&resp)
+				respJSON, err := json.Marshal(&resp)
 				if err != nil {
 					t.Fatalf("error marshaling response body: %v", err)
 				}
@@ -508,7 +518,7 @@ func TestCreateCheckoutErrorMessage(t *testing.T) {
 					ProtoMajor:    1,
 					ProtoMinor:    0,
 					ContentLength: 0,
-					Body:          ioutil.NopCloser(bytes.NewReader(respJson)),
+					Body:          ioutil.NopCloser(bytes.NewReader(respJSON)),
 					Request:       r,
 				}, nil
 			},
@@ -519,6 +529,7 @@ func TestCreateCheckoutErrorMessage(t *testing.T) {
 	if err != nil {
 		t.Fatalf("error creating square client: %v", err)
 	}
+
 	_, err = squareClient.Create(context.Background(), &CreateRequest{
 		LocationID:                 locationID,
 		IdempotencyKey:             idempotencyKey,
@@ -527,7 +538,7 @@ func TestCreateCheckoutErrorMessage(t *testing.T) {
 		MerchantSupportEmail:       merchantSupportEmail,
 		PrePopulateBuyerEmail:      prePopulateBuyerEmail,
 		PrePopulateShippingAddress: prePopulateShippingAddress,
-		RedirectURL:                redirectUrl,
+		RedirectURL:                redirectURL,
 		AdditionalRecipients:       additionalRecipients,
 		Note:                       note,
 	})

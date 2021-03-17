@@ -24,6 +24,7 @@ func (c *client) List(ctx context.Context, req *ListRequest) (*ListResponse, err
 	if err := c.i.Do(ctx, http.MethodGet, "locations", nil, &res); err != nil {
 		return nil, fmt.Errorf("error performing http request: %w", err)
 	}
+
 	return &ListResponse{
 		Locations: res.Locations,
 	}, nil

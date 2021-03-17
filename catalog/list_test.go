@@ -1,3 +1,4 @@
+//nolint:goconst
 package catalog
 
 import (
@@ -21,6 +22,8 @@ import (
 )
 
 func TestListCatalog(t *testing.T) {
+	t.Parallel()
+
 	apiKey := "some api key"
 	types := []objects.CatalogObjectType{
 		objects.CatalogObjectTypeTax,
@@ -120,7 +123,7 @@ func TestListCatalog(t *testing.T) {
 					t.Fatalf("found error while marshaling json response: %v", err)
 				}
 
-				callCount = callCount + 1
+				callCount++
 
 				return &http.Response{
 					Status:        http.StatusText(http.StatusOK),
@@ -135,10 +138,12 @@ func TestListCatalog(t *testing.T) {
 			},
 		},
 	}
+
 	catalogClient, err := NewClient(apiKey, objects.Production, client)
 	if err != nil {
 		t.Fatalf("error creating square client: %v", err)
 	}
+
 	catalogObjects := catalogClient.List(context.Background(), &ListRequest{Types: types})
 
 	idx := 0
@@ -146,7 +151,7 @@ func TestListCatalog(t *testing.T) {
 		if !cmp.Equal(catalogObjects.Value().Object, expectedObjects[idx], cmpopts.IgnoreUnexported()) {
 			t.Fatalf("found unexpected catalog item %s, expected %s", spew.Sdump(catalogObjects.Value()), spew.Sdump(expectedObjects[idx]))
 		}
-		idx = idx + 1
+		idx++
 	}
 
 	if catalogObjects.Error() != nil {
@@ -163,6 +168,8 @@ func TestListCatalog(t *testing.T) {
 }
 
 func TestListCatalogClientError(t *testing.T) {
+	t.Parallel()
+
 	apiKey := "some api key"
 	types := []objects.CatalogObjectType{
 		objects.CatalogObjectTypeTax,
@@ -176,15 +183,17 @@ func TestListCatalogClientError(t *testing.T) {
 			},
 		},
 	}
+
 	catalogClient, err := NewClient(apiKey, objects.Production, client)
 	if err != nil {
 		t.Fatalf("error creating square client: %v", err)
 	}
+
 	catalogObjects := catalogClient.List(context.Background(), &ListRequest{Types: types})
 
 	idx := 0
 	for catalogObjects.Next() {
-		idx = idx + 1
+		idx++
 	}
 
 	if catalogObjects.Error() == nil {
@@ -197,6 +206,8 @@ func TestListCatalogClientError(t *testing.T) {
 }
 
 func TestListCatalogHttpError(t *testing.T) {
+	t.Parallel()
+
 	apiKey := "some api key"
 	types := []objects.CatalogObjectType{
 		objects.CatalogObjectTypeTax,
@@ -219,15 +230,17 @@ func TestListCatalogHttpError(t *testing.T) {
 			},
 		},
 	}
+
 	catalogClient, err := NewClient(apiKey, objects.Production, client)
 	if err != nil {
 		t.Fatalf("error creating square client: %v", err)
 	}
+
 	catalogObjects := catalogClient.List(context.Background(), &ListRequest{Types: types})
 
 	idx := 0
 	for catalogObjects.Next() {
-		idx = idx + 1
+		idx++
 	}
 
 	if catalogObjects.Error() == nil {
@@ -249,6 +262,8 @@ func TestListCatalogHttpError(t *testing.T) {
 }
 
 func TestListCatalogErrorMessage(t *testing.T) {
+	t.Parallel()
+
 	apiKey := "some api key"
 	types := []objects.CatalogObjectType{
 		objects.CatalogObjectTypeTax,
@@ -256,7 +271,7 @@ func TestListCatalogErrorMessage(t *testing.T) {
 	}
 
 	testError := &objects.Error{
-		Category: objects.ErrorCategoryApiError,
+		Category: objects.ErrorCategoryAPIError,
 		Code:     objects.ErrorCodeInternalServerError,
 		Detail:   "some detail",
 		Field:    "some field",
@@ -271,7 +286,7 @@ func TestListCatalogErrorMessage(t *testing.T) {
 					Errors: []*objects.Error{testError},
 				}
 
-				respJson, err := json.Marshal(&resp)
+				respJSON, err := json.Marshal(&resp)
 				if err != nil {
 					t.Fatalf("error marshaling response body: %v", err)
 				}
@@ -282,21 +297,23 @@ func TestListCatalogErrorMessage(t *testing.T) {
 					ProtoMajor:    1,
 					ProtoMinor:    0,
 					ContentLength: 0,
-					Body:          ioutil.NopCloser(bytes.NewReader(respJson)),
+					Body:          ioutil.NopCloser(bytes.NewReader(respJSON)),
 					Request:       r,
 				}, nil
 			},
 		},
 	}
+
 	catalogClient, err := NewClient(apiKey, objects.Production, client)
 	if err != nil {
 		t.Fatalf("error creating square client: %v", err)
 	}
+
 	catalogObjects := catalogClient.List(context.Background(), &ListRequest{Types: types})
 
 	idx := 0
 	for catalogObjects.Next() {
-		idx = idx + 1
+		idx++
 	}
 
 	if catalogObjects.Error() == nil {

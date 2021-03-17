@@ -73,117 +73,121 @@ type CatalogObject struct {
 }
 
 func (c *CatalogObject) MarshalJSON() ([]byte, error) {
-	cJson := catalogObject{
+	cJSON := catalogObject{
 		catalogObjectAlias: (*catalogObjectAlias)(c),
 	}
 	switch t := c.CatalogObjectType.(type) {
 	case *CatalogItem:
-		cJson.ItemData = t
-		cJson.Type = CatalogObjectTypeItem
+		cJSON.ItemData = t
+		cJSON.Type = CatalogObjectTypeItem
 	case *CatalogCategory:
-		cJson.CategoryData = t
-		cJson.Type = CatalogObjectTypeCategory
+		cJSON.CategoryData = t
+		cJSON.Type = CatalogObjectTypeCategory
 	case *CatalogItemVariation:
-		cJson.ItemVariationData = t
-		cJson.Type = CatalogObjectTypeItemVariation
+		cJSON.ItemVariationData = t
+		cJSON.Type = CatalogObjectTypeItemVariation
 	case *CatalogTax:
-		cJson.TaxData = t
-		cJson.Type = CatalogObjectTypeTax
+		cJSON.TaxData = t
+		cJSON.Type = CatalogObjectTypeTax
 	case *CatalogDiscount:
-		cJson.DiscountData = t
-		cJson.Type = CatalogObjectTypeDiscount
+		cJSON.DiscountData = t
+		cJSON.Type = CatalogObjectTypeDiscount
 	case *CatalogModifierList:
-		cJson.ModifierListData = t
-		cJson.Type = CatalogObjectTypeModifierList
+		cJSON.ModifierListData = t
+		cJSON.Type = CatalogObjectTypeModifierList
 	case *CatalogModifier:
-		cJson.ModifierData = t
-		cJson.Type = CatalogObjectTypeModifier
+		cJSON.ModifierData = t
+		cJSON.Type = CatalogObjectTypeModifier
 	case *CatalogImage:
-		cJson.ImageData = t
-		cJson.Type = CatalogObjectTypeImage
+		cJSON.ImageData = t
+		cJSON.Type = CatalogObjectTypeImage
 	case *CatalogMeasurementUnit:
-		cJson.MeasurementUnitData = t
-		cJson.Type = CatalogObjectTypeMeasurementUnit
+		cJSON.MeasurementUnitData = t
+		cJSON.Type = CatalogObjectTypeMeasurementUnit
 	case *CatalogTimePeriod:
-		cJson.TimePeriodData = t
-		cJson.Type = CatalogObjectTypeTimePeriod
+		cJSON.TimePeriodData = t
+		cJSON.Type = CatalogObjectTypeTimePeriod
 	case *CatalogProductSet:
-		cJson.ProductSetData = t
-		cJson.Type = CatalogObjectTypeProductSet
+		cJSON.ProductSetData = t
+		cJSON.Type = CatalogObjectTypeProductSet
 	case *CatalogPricingRule:
-		cJson.PricingRuleData = t
-		cJson.Type = CatalogObjectTypePricingRule
+		cJSON.PricingRuleData = t
+		cJSON.Type = CatalogObjectTypePricingRule
 	case *CatalogSubscriptionPlan:
-		cJson.SubscriptionPlanData = t
-		cJson.Type = CatalogObjectTypeSubscriptionPlan
+		cJSON.SubscriptionPlanData = t
+		cJSON.Type = CatalogObjectTypeSubscriptionPlan
 	case *CatalogItemOption:
-		cJson.ItemOptionData = t
-		cJson.Type = CatalogObjectTypeItemOption
+		cJSON.ItemOptionData = t
+		cJSON.Type = CatalogObjectTypeItemOption
 	case *CatalogItemOptionValue:
-		cJson.ItemOptionValueData = t
-		cJson.Type = CatalogObjectTypeItemOptionVal
+		cJSON.ItemOptionValueData = t
+		cJSON.Type = CatalogObjectTypeItemOptionVal
 	case *CatalogCustomAttributeDefinition:
-		cJson.CustomAttributeDefinitionData = t
-		cJson.Type = CatalogObjectTypeCustomAttributeDefinition
+		cJSON.CustomAttributeDefinitionData = t
+		cJSON.Type = CatalogObjectTypeCustomAttributeDefinition
 	case *CatalogQuickAmountsSettings:
-		cJson.QuickAmountsSettingsData = t
-		cJson.Type = CatalogObjectTypeQuickAmountsSettings
+		cJSON.QuickAmountsSettingsData = t
+		cJSON.Type = CatalogObjectTypeQuickAmountsSettings
 	default:
-		return nil, errors.New("Found unknown catalog object data type")
+		return nil, errors.New("found unknown catalog object data type")
 	}
-	json, err := json.Marshal(&cJson)
+
+	json, err := json.Marshal(&cJSON)
 	if err != nil {
-		return nil, fmt.Errorf("Error marshaling json catalog object: %w", err)
+		return nil, fmt.Errorf("error marshaling json catalog object: %w", err)
 	}
+
 	return json, nil
 }
 
 func (c *CatalogObject) UnmarshalJSON(data []byte) error {
-	cJson := catalogObject{
+	cJSON := catalogObject{
 		catalogObjectAlias: (*catalogObjectAlias)(c),
 	}
-	err := json.Unmarshal(data, &cJson)
+
+	err := json.Unmarshal(data, &cJSON)
 	if err != nil {
-		return fmt.Errorf("Error unmarshaling catalog object: %w", err)
+		return fmt.Errorf("error unmarshaling catalog object: %w", err)
 	}
 
-	switch cJson.Type {
+	switch cJSON.Type {
 	case CatalogObjectTypeItem:
-		c.CatalogObjectType = cJson.ItemData
+		c.CatalogObjectType = cJSON.ItemData
 	case CatalogObjectTypeCategory:
-		c.CatalogObjectType = cJson.CategoryData
+		c.CatalogObjectType = cJSON.CategoryData
 	case CatalogObjectTypeItemVariation:
-		c.CatalogObjectType = cJson.ItemVariationData
+		c.CatalogObjectType = cJSON.ItemVariationData
 	case CatalogObjectTypeTax:
-		c.CatalogObjectType = cJson.TaxData
+		c.CatalogObjectType = cJSON.TaxData
 	case CatalogObjectTypeDiscount:
-		c.CatalogObjectType = cJson.DiscountData
+		c.CatalogObjectType = cJSON.DiscountData
 	case CatalogObjectTypeModifierList:
-		c.CatalogObjectType = cJson.ModifierListData
+		c.CatalogObjectType = cJSON.ModifierListData
 	case CatalogObjectTypeModifier:
-		c.CatalogObjectType = cJson.ModifierData
+		c.CatalogObjectType = cJSON.ModifierData
 	case CatalogObjectTypeImage:
-		c.CatalogObjectType = cJson.ImageData
+		c.CatalogObjectType = cJSON.ImageData
 	case CatalogObjectTypeMeasurementUnit:
-		c.CatalogObjectType = cJson.MeasurementUnitData
+		c.CatalogObjectType = cJSON.MeasurementUnitData
 	case CatalogObjectTypeTimePeriod:
-		c.CatalogObjectType = cJson.TimePeriodData
+		c.CatalogObjectType = cJSON.TimePeriodData
 	case CatalogObjectTypeProductSet:
-		c.CatalogObjectType = cJson.ProductSetData
+		c.CatalogObjectType = cJSON.ProductSetData
 	case CatalogObjectTypePricingRule:
-		c.CatalogObjectType = cJson.PricingRuleData
+		c.CatalogObjectType = cJSON.PricingRuleData
 	case CatalogObjectTypeSubscriptionPlan:
-		c.CatalogObjectType = cJson.SubscriptionPlanData
+		c.CatalogObjectType = cJSON.SubscriptionPlanData
 	case CatalogObjectTypeItemOption:
-		c.CatalogObjectType = cJson.ItemOptionData
+		c.CatalogObjectType = cJSON.ItemOptionData
 	case CatalogObjectTypeItemOptionVal:
-		c.CatalogObjectType = cJson.ItemOptionValueData
+		c.CatalogObjectType = cJSON.ItemOptionValueData
 	case CatalogObjectTypeCustomAttributeDefinition:
-		c.CatalogObjectType = cJson.CustomAttributeDefinitionData
+		c.CatalogObjectType = cJSON.CustomAttributeDefinitionData
 	case CatalogObjectTypeQuickAmountsSettings:
-		c.CatalogObjectType = cJson.QuickAmountsSettingsData
+		c.CatalogObjectType = cJSON.QuickAmountsSettingsData
 	default:
-		return fmt.Errorf("Found unknown catalog object type %s", cJson.Type)
+		return fmt.Errorf("found unknown catalog object type %s", cJSON.Type)
 	}
+
 	return nil
 }

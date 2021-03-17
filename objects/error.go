@@ -7,7 +7,7 @@ import (
 type ErrorCategory string
 
 const (
-	ErrorCategoryApiError            ErrorCategory = "API_ERROR"
+	ErrorCategoryAPIError            ErrorCategory = "API_ERROR"
 	ErrorCategoryAuthenticationError ErrorCategory = "AUTHENTICATION_ERROR"
 	ErrorCategoryInvalidRequestError ErrorCategory = "INVALID_REQUEST_ERROR"
 	ErrorCategoryRateLimitError      ErrorCategory = "RATE_LIMIT_ERROR"
@@ -37,7 +37,7 @@ const (
 	ErrorCodeInvalidCursor                                 ErrorCode = "INVALID_CURSOR"
 	ErrorCodeUnknownQueryParameter                         ErrorCode = "UNKNOWN_QUERY_PARAMETER"
 	ErrorCodeConflictingParameters                         ErrorCode = "CONFLICTING_PARAMETERS"
-	ErrorCodeExpectedJsonBody                              ErrorCode = "EXPECTED_JSON_BODY"
+	ErrorCodeExpectedJSONBody                              ErrorCode = "EXPECTED_JSON_BODY"
 	ErrorCodeInvalidSortOrder                              ErrorCode = "INVALID_SORT_ORDER"
 	ErrorCodeValueRegexMismatch                            ErrorCode = "VALUE_REGEX_MISMATCH"
 	ErrorCodeValueTooShort                                 ErrorCode = "VALUE_TOO_SHORT"
@@ -93,7 +93,7 @@ const (
 	ErrorCodeCheckoutExpired                               ErrorCode = "CHECKOUT_EXPIRED"
 	ErrorCodeBadCertificate                                ErrorCode = "BAD_CERTIFICATE"
 	ErrorCodeInvalidSquareVersionFormat                    ErrorCode = "INVALID_SQUARE_VERSION_FORMAT"
-	ErrorCodeApiVersionIncompatible                        ErrorCode = "API_VERSION_INCOMPATIBLE"
+	ErrorCodeAPIVersionIncompatible                        ErrorCode = "API_VERSION_INCOMPATIBLE"
 	ErrorCodeCardDeclined                                  ErrorCode = "CARD_DECLINED"
 	ErrorCodeVerifyCvvFailure                              ErrorCode = "VERIFY_CVV_FAILURE"
 	ErrorCodeVerifyAvsFailure                              ErrorCode = "VERIFY_AVS_FAILURE"
@@ -136,6 +136,7 @@ func (e *ErrorList) Error() string {
 	for _, err := range e.Errors {
 		retVal = fmt.Sprintf(retVal+" %s", err.Error())
 	}
+
 	return retVal
 }
 

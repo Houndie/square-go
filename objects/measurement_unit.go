@@ -64,68 +64,70 @@ type measurementUnit struct {
 }
 
 func (m *MeasurementUnit) MarshalJSON() ([]byte, error) {
-	mJson := measurementUnit{}
+	mJSON := measurementUnit{}
 	switch t := m.Type.(type) {
 	case *MeasurementUnitCustom:
-		mJson.CustomUnit = t
-		mJson.Type = measurementUnitTypeLength
+		mJSON.CustomUnit = t
+		mJSON.Type = measurementUnitTypeLength
 	case MeasurementUnitArea:
-		mJson.AreaUnit = string(t)
-		mJson.Type = measurementUnitTypeArea
+		mJSON.AreaUnit = string(t)
+		mJSON.Type = measurementUnitTypeArea
 	case MeasurementUnitLength:
-		mJson.LengthUnit = string(t)
-		mJson.Type = measurementUnitTypeLength
+		mJSON.LengthUnit = string(t)
+		mJSON.Type = measurementUnitTypeLength
 	case MeasurementUnitVolume:
-		mJson.VolumeUnit = string(t)
-		mJson.Type = measurementUnitTypeVolume
+		mJSON.VolumeUnit = string(t)
+		mJSON.Type = measurementUnitTypeVolume
 	case MeasurementUnitWeight:
-		mJson.WeightUnit = string(t)
-		mJson.Type = measurementUnitTypeWeight
+		mJSON.WeightUnit = string(t)
+		mJSON.Type = measurementUnitTypeWeight
 	case MeasurementUnitGeneric:
-		mJson.GenericUnit = string(t)
-		mJson.Type = measurementUnitTypeGeneric
+		mJSON.GenericUnit = string(t)
+		mJSON.Type = measurementUnitTypeGeneric
 	case MeasurementUnitTime:
-		mJson.TimeUnit = string(t)
-		mJson.Type = measurementUnitTypeTime
+		mJSON.TimeUnit = string(t)
+		mJSON.Type = measurementUnitTypeTime
 	default:
 		return nil, errors.New("found unknown measurement unit type when marshaling")
 	}
 
-	b, err := json.Marshal(mJson)
+	b, err := json.Marshal(mJSON)
 	if err != nil {
 		return nil, fmt.Errorf("error marshaling json measurement unit: %w", err)
 	}
+
 	return b, nil
 }
 
 func (m *MeasurementUnit) UnmarshalJSON(b []byte) error {
-	mJson := measurementUnit{}
-	if err := json.Unmarshal(b, &mJson); err != nil {
+	mJSON := measurementUnit{}
+	if err := json.Unmarshal(b, &mJSON); err != nil {
 		return fmt.Errorf("error unmarshaling json measurement unit: %w", err)
 	}
 
-	switch mJson.Type {
+	switch mJSON.Type {
 	case measurementUnitTypeCustom:
-		m.Type = mJson.CustomUnit
+		m.Type = mJSON.CustomUnit
 		return nil
 	case measurementUnitTypeArea:
-		m.Type = MeasurementUnitArea(mJson.AreaUnit)
+		m.Type = MeasurementUnitArea(mJSON.AreaUnit)
 		return nil
 	case measurementUnitTypeLength:
-		m.Type = MeasurementUnitLength(mJson.LengthUnit)
+		m.Type = MeasurementUnitLength(mJSON.LengthUnit)
 		return nil
 	case measurementUnitTypeVolume:
-		m.Type = MeasurementUnitVolume(mJson.VolumeUnit)
+		m.Type = MeasurementUnitVolume(mJSON.VolumeUnit)
 		return nil
 	case measurementUnitTypeWeight:
-		m.Type = MeasurementUnitWeight(mJson.WeightUnit)
+		m.Type = MeasurementUnitWeight(mJSON.WeightUnit)
 		return nil
 	case measurementUnitTypeGeneric:
-		m.Type = MeasurementUnitGeneric(mJson.GenericUnit)
+		m.Type = MeasurementUnitGeneric(mJSON.GenericUnit)
 		return nil
 	case measurementUnitTypeTime:
-		m.Type = MeasurementUnitTime(mJson.TimeUnit)
+		m.Type = MeasurementUnitTime(mJSON.TimeUnit)
 		return nil
 	}
-	return errors.New("No unit types found in json measurement unit")
+
+	return errors.New("no unit types found in json measurement unit")
 }

@@ -16,7 +16,7 @@ const (
 )
 
 type SourceApplication struct {
-	ApplicationID string  `json:"application_id,omitempty"i`
+	ApplicationID string  `json:"application_id,omitempty"`
 	Name          string  `json:"name,omitempty"`
 	Product       Product `json:"product,omitempty"`
 }

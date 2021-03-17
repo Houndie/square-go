@@ -11,7 +11,7 @@ type InventoryTransfer struct {
 	FromLocationID    string             `json:"from_location_id,omitempty"`
 	OccurredAt        *time.Time         `json:"occurred_at,omitempty"`
 	Quantity          string             `json:"quanity,omitempty"`
-	ReferenceID       string             `json:"reference_id",omitempty"`
+	ReferenceID       string             `json:"reference_id,omitempty"`
 	Source            *SourceApplication `json:"source,omitempty"`
 	State             InventoryState     `json:"state,omitempty"`
 	ToLocationID      string             `json:"to_location_id,omitempty"`

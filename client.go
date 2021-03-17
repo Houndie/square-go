@@ -25,18 +25,22 @@ func NewClient(apiKey string, environment objects.Environment, httpClient *http.
 	if err != nil {
 		return nil, fmt.Errorf("error constructing catalog client: %w", err)
 	}
+
 	checkout, err := checkout.NewClient(apiKey, environment, httpClient)
 	if err != nil {
 		return nil, fmt.Errorf("error constructing catalog client: %w", err)
 	}
+
 	inventory, err := inventory.NewClient(apiKey, environment, httpClient)
 	if err != nil {
 		return nil, fmt.Errorf("error constructing catalog client: %w", err)
 	}
+
 	locations, err := locations.NewClient(apiKey, environment, httpClient)
 	if err != nil {
 		return nil, fmt.Errorf("error constructing catalog client: %w", err)
 	}
+
 	orders, err := orders.NewClient(apiKey, environment, httpClient)
 	if err != nil {
 		return nil, fmt.Errorf("error constructing catalog client: %w", err)

@@ -71,5 +71,6 @@ func (c *client) List(ctx context.Context, req *ListRequest) ListIterator {
 		}
 		return len(res.Objects), res.Cursor, nil
 	})
+
 	return iter
 }

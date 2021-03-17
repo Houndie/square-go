@@ -21,6 +21,7 @@ const (
 
 func endpointToURL(environment objects.Environment) (*url.URL, error) {
 	var endpoint string
+
 	switch environment {
 	case objects.Production:
 		endpoint = productionEndpoint
@@ -29,11 +30,13 @@ func endpointToURL(environment objects.Environment) (*url.URL, error) {
 	default:
 		return nil, fmt.Errorf("unknown environment")
 	}
+
 	u, err := url.Parse(endpoint)
 	if err != nil {
 		return nil, fmt.Errorf("error parsing endpoint url: %w", err)
 	}
-	return u, err
+
+	return u, nil
 }
 
 type middleware struct {
@@ -44,9 +47,11 @@ type middleware struct {
 func (m middleware) RoundTrip(r *http.Request) (*http.Response, error) {
 	r.Header.Add("Authorization", "Bearer "+m.apiKey)
 	r.Header.Add("Accept", "application/json")
+
 	if r.Method == "POST" {
 		r.Header.Add("Content-Type", "application/json")
 	}
+
 	return m.wrap.RoundTrip(r)
 }
 
@@ -72,6 +77,7 @@ func makeHTTPClient(apiKey string, httpClient *http.Client) *http.Client {
 			wrap:   httpClient.Transport,
 		}
 	}
+
 	return &http.Client{
 		Transport:     transport,
 		CheckRedirect: httpClient.CheckRedirect,

@@ -18,9 +18,9 @@ type CatalogPricingRule struct {
 	MatchProductsID     string          `json:"match_products_id,omitempty"`
 	Name                string          `json:"name,omitempty"`
 	TimePeriodIDs       []string        `json:"time_period_ids,omitempty"`
-	ValidFromDate       *time.Time      `json:"valid_from_data,omitempty"`
+	ValidFromDate       *time.Time      `json:"valid_from_date,omitempty"`
 	ValidFromLocalTime  string          `json:"valid_from_local_time,omitempty"`
-	ValidUntilDate      *time.Time      `json:"valid_from_data,omitempty"`
+	ValidUntilDate      *time.Time      `json:"valid_until_date,omitempty"`
 	ValidUntilLocalTime string          `json:"valid_until_local_time,omitempty"`
 }
 
