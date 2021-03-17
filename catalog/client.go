@@ -9,7 +9,7 @@ import (
 )
 
 type Client interface {
-	List(ctx context.Context, types []objects.CatalogObjectType) ListIterator
+	List(ctx context.Context, req *ListRequest) ListIterator
 }
 
 type client struct {

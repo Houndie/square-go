@@ -9,7 +9,7 @@ import (
 )
 
 type Client interface {
-	List(ctx context.Context) ([]*objects.Location, error)
+	List(ctx context.Context, req *ListRequest) (*ListResponse, error)
 }
 
 type client struct {

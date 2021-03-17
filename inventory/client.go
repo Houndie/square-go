@@ -3,15 +3,14 @@ package inventory
 import (
 	"context"
 	"net/http"
-	"time"
 
 	"github.com/Houndie/square-go/internal"
 	"github.com/Houndie/square-go/objects"
 )
 
 type Client interface {
-	BatchChange(ctx context.Context, idempotencyKey string, changes []*objects.InventoryChange, opts ...BatchChangeOption) ([]*objects.InventoryCount, error)
-	BatchRetrieveCounts(ctx context.Context, catalogObjectIDs, locationIDs []string, updatedAfter *time.Time) BatchRetrieveCountsIterator
+	BatchChange(ctx context.Context, req *BatchChangeRequest) (*BatchChangeResponse, error)
+	BatchRetrieveCounts(ctx context.Context, req *BatchRetrieveCountsRequest) BatchRetrieveCountsIterator
 }
 
 type client struct {

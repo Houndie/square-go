@@ -139,11 +139,11 @@ func TestListCatalog(t *testing.T) {
 	if err != nil {
 		t.Fatalf("error creating square client: %v", err)
 	}
-	catalogObjects := catalogClient.List(context.Background(), types)
+	catalogObjects := catalogClient.List(context.Background(), &ListRequest{Types: types})
 
 	idx := 0
 	for catalogObjects.Next() {
-		if !cmp.Equal(catalogObjects.Value(), expectedObjects[idx], cmpopts.IgnoreUnexported()) {
+		if !cmp.Equal(catalogObjects.Value().Object, expectedObjects[idx], cmpopts.IgnoreUnexported()) {
 			t.Fatalf("found unexpected catalog item %s, expected %s", spew.Sdump(catalogObjects.Value()), spew.Sdump(expectedObjects[idx]))
 		}
 		idx = idx + 1
@@ -180,7 +180,7 @@ func TestListCatalogClientError(t *testing.T) {
 	if err != nil {
 		t.Fatalf("error creating square client: %v", err)
 	}
-	catalogObjects := catalogClient.List(context.Background(), types)
+	catalogObjects := catalogClient.List(context.Background(), &ListRequest{Types: types})
 
 	idx := 0
 	for catalogObjects.Next() {
@@ -223,7 +223,7 @@ func TestListCatalogHttpError(t *testing.T) {
 	if err != nil {
 		t.Fatalf("error creating square client: %v", err)
 	}
-	catalogObjects := catalogClient.List(context.Background(), types)
+	catalogObjects := catalogClient.List(context.Background(), &ListRequest{Types: types})
 
 	idx := 0
 	for catalogObjects.Next() {
@@ -292,7 +292,7 @@ func TestListCatalogErrorMessage(t *testing.T) {
 	if err != nil {
 		t.Fatalf("error creating square client: %v", err)
 	}
-	catalogObjects := catalogClient.List(context.Background(), types)
+	catalogObjects := catalogClient.List(context.Background(), &ListRequest{Types: types})
 
 	idx := 0
 	for catalogObjects.Next() {

@@ -11,17 +11,17 @@ import (
 )
 
 type ListIterator interface {
-	Value() *objects.CatalogObject
+	Value() *ListResponse
 	Error() error
 	Next() bool
 }
 
 type listIterator struct {
-	values []*objects.CatalogObject
+	values []*ListResponse
 	iter   *internal.Iterator
 }
 
-func (i *listIterator) Value() *objects.CatalogObject {
+func (i *listIterator) Value() *ListResponse {
 	return i.values[i.iter.Value()]
 }
 
@@ -33,11 +33,19 @@ func (i *listIterator) Next() bool {
 	return i.iter.Next()
 }
 
-func (c *client) List(ctx context.Context, types []objects.CatalogObjectType) ListIterator {
+type ListRequest struct {
+	Types []objects.CatalogObjectType
+}
+
+type ListResponse struct {
+	Object *objects.CatalogObject
+}
+
+func (c *client) List(ctx context.Context, req *ListRequest) ListIterator {
 	iter := &listIterator{}
 	iter.iter = internal.NewIterator(func(cursor string) (int, string, error) {
-		stringTypes := make([]string, len(types))
-		for i, oneType := range types {
+		stringTypes := make([]string, len(req.Types))
+		for i, oneType := range req.Types {
 			stringTypes[i] = string(oneType)
 		}
 		req := struct {
@@ -57,7 +65,10 @@ func (c *client) List(ctx context.Context, types []objects.CatalogObjectType) Li
 			return 0, "", fmt.Errorf("error performing http request: %w", err)
 		}
 
-		iter.values = res.Objects
+		iter.values = make([]*ListResponse, len(res.Objects))
+		for i, object := range res.Objects {
+			iter.values[i] = &ListResponse{Object: object}
+		}
 		return len(res.Objects), res.Cursor, nil
 	})
 	return iter

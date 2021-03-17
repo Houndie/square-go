@@ -9,7 +9,7 @@ import (
 )
 
 type Client interface {
-	Create(ctx context.Context, locationID, idempotencyKey string, order *objects.CreateOrderRequest, askForShippingAddress bool, merchantSupportEmail string, prePopulateBuyerEmail string, prePopulateShippingAddress *objects.Address, redirectUrl string, additionalRecipients []*objects.ChargeRequestAdditionalRecipient, note string) (*objects.Checkout, error)
+	Create(ctx context.Context, req *CreateRequest) (*CreateResponse, error)
 }
 
 type client struct {

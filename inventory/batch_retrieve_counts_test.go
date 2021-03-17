@@ -154,27 +154,31 @@ func TestBatchRetrieveInventoryCounts(t *testing.T) {
 	if err != nil {
 		t.Fatalf("error creating square client: %v", err)
 	}
-	inventoryCounts := squareClient.BatchRetrieveCounts(context.Background(), catalogObjectIDs, locationIDs, &updatedAfter)
+	inventoryCounts := squareClient.BatchRetrieveCounts(context.Background(), &BatchRetrieveCountsRequest{
+		CatalogObjectIDs: catalogObjectIDs,
+		LocationIDs:      locationIDs,
+		UpdatedAfter:     &updatedAfter,
+	})
 
 	idx := 0
 	for inventoryCounts.Next() {
-		if inventoryCounts.Value().CatalogObjectID != expectedCounts[idx].CatalogObjectID {
-			t.Fatalf("found catalog object id %s, expected %s", inventoryCounts.Value().CatalogObjectID, expectedCounts[idx].CatalogObjectID)
+		if inventoryCounts.Value().Count.CatalogObjectID != expectedCounts[idx].CatalogObjectID {
+			t.Fatalf("found catalog object id %s, expected %s", inventoryCounts.Value().Count.CatalogObjectID, expectedCounts[idx].CatalogObjectID)
 		}
-		if inventoryCounts.Value().CatalogObjectType != expectedCounts[idx].CatalogObjectType {
-			t.Fatalf("found catalog object type %s, expected %s", inventoryCounts.Value().CatalogObjectType, expectedCounts[idx].CatalogObjectType)
+		if inventoryCounts.Value().Count.CatalogObjectType != expectedCounts[idx].CatalogObjectType {
+			t.Fatalf("found catalog object type %s, expected %s", inventoryCounts.Value().Count.CatalogObjectType, expectedCounts[idx].CatalogObjectType)
 		}
-		if inventoryCounts.Value().State != expectedCounts[idx].State {
-			t.Fatalf("found state %s, expected %s", inventoryCounts.Value().State, expectedCounts[idx].State)
+		if inventoryCounts.Value().Count.State != expectedCounts[idx].State {
+			t.Fatalf("found state %s, expected %s", inventoryCounts.Value().Count.State, expectedCounts[idx].State)
 		}
-		if inventoryCounts.Value().LocationID != expectedCounts[idx].LocationID {
-			t.Fatalf("found location id %s, expected %s", inventoryCounts.Value().LocationID, expectedCounts[idx].LocationID)
+		if inventoryCounts.Value().Count.LocationID != expectedCounts[idx].LocationID {
+			t.Fatalf("found location id %s, expected %s", inventoryCounts.Value().Count.LocationID, expectedCounts[idx].LocationID)
 		}
-		if inventoryCounts.Value().Quantity != expectedCounts[idx].Quantity {
-			t.Fatalf("found quantity %s, expected %s", inventoryCounts.Value().Quantity, expectedCounts[idx].Quantity)
+		if inventoryCounts.Value().Count.Quantity != expectedCounts[idx].Quantity {
+			t.Fatalf("found quantity %s, expected %s", inventoryCounts.Value().Count.Quantity, expectedCounts[idx].Quantity)
 		}
-		if !inventoryCounts.Value().CalculatedAt.Equal(*expectedCounts[idx].CalculatedAt) {
-			t.Fatalf("found calculated time %s, expected %s", inventoryCounts.Value().CalculatedAt, expectedCounts[idx].CalculatedAt)
+		if !inventoryCounts.Value().Count.CalculatedAt.Equal(*expectedCounts[idx].CalculatedAt) {
+			t.Fatalf("found calculated time %s, expected %s", inventoryCounts.Value().Count.CalculatedAt, expectedCounts[idx].CalculatedAt)
 		}
 		idx = idx + 1
 	}
@@ -205,7 +209,11 @@ func TestBatchRetrieveInventoryCountsClientError(t *testing.T) {
 	if err != nil {
 		t.Fatalf("error creating square client: %v", err)
 	}
-	inventoryCounts := squareClient.BatchRetrieveCounts(context.Background(), catalogObjectIDs, locationIDs, &updatedAfter)
+	inventoryCounts := squareClient.BatchRetrieveCounts(context.Background(), &BatchRetrieveCountsRequest{
+		CatalogObjectIDs: catalogObjectIDs,
+		LocationIDs:      locationIDs,
+		UpdatedAfter:     &updatedAfter,
+	})
 
 	idx := 0
 	for inventoryCounts.Next() {
@@ -247,7 +255,11 @@ func TestBatchRetrieveInventoryCountsErrorCode(t *testing.T) {
 	if err != nil {
 		t.Fatalf("error creating square client: %v", err)
 	}
-	inventoryCounts := squareClient.BatchRetrieveCounts(context.Background(), catalogObjectIDs, locationIDs, &updatedAfter)
+	inventoryCounts := squareClient.BatchRetrieveCounts(context.Background(), &BatchRetrieveCountsRequest{
+		CatalogObjectIDs: catalogObjectIDs,
+		LocationIDs:      locationIDs,
+		UpdatedAfter:     &updatedAfter,
+	})
 
 	idx := 0
 	for inventoryCounts.Next() {
@@ -258,8 +270,8 @@ func TestBatchRetrieveInventoryCountsErrorCode(t *testing.T) {
 		t.Fatalf("expected error, found none")
 	}
 
-	uerr, ok := inventoryCounts.Error().(objects.UnexpectedCodeError)
-	if !ok {
+	var uerr objects.UnexpectedCodeError
+	if !errors.As(inventoryCounts.Error(), &uerr) {
 		t.Fatalf("error was not of type unexpectedCodeError")
 	}
 
@@ -315,7 +327,11 @@ func TestBatchRetrieveInventoryCountsErrorMessage(t *testing.T) {
 	if err != nil {
 		t.Fatalf("error creating square client: %v", err)
 	}
-	inventoryCounts := squareClient.BatchRetrieveCounts(context.Background(), catalogObjectIDs, locationIDs, &updatedAfter)
+	inventoryCounts := squareClient.BatchRetrieveCounts(context.Background(), &BatchRetrieveCountsRequest{
+		CatalogObjectIDs: catalogObjectIDs,
+		LocationIDs:      locationIDs,
+		UpdatedAfter:     &updatedAfter,
+	})
 
 	idx := 0
 	for inventoryCounts.Next() {

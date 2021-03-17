@@ -9,20 +9,26 @@ import (
 	"github.com/Houndie/square-go/objects"
 )
 
-func (c *client) BatchRetrieve(ctx context.Context, locationID string, orderIDs []string) ([]*objects.Order, error) {
-	req := struct {
-		OrderIDs []string `json:"order_ids"`
-	}{
-		OrderIDs: orderIDs,
-	}
+type BatchRetrieveRequest struct {
+	LocationID string   `json:"-"`
+	OrderIDs   []string `json:"order_ids"`
+}
 
+type BatchRetrieveResponse struct {
+	Orders []*objects.Order `json:"orders"`
+}
+
+func (c *client) BatchRetrieve(ctx context.Context, req *BatchRetrieveRequest) (*BatchRetrieveResponse, error) {
+	externalRes := &BatchRetrieveResponse{}
 	res := struct {
 		internal.WithErrors
-		Orders []*objects.Order `json:"orders"`
-	}{}
+		*BatchRetrieveResponse
+	}{
+		BatchRetrieveResponse: externalRes,
+	}
 
-	if err := c.i.Do(ctx, http.MethodPost, c.i.Endpoint("locations/"+locationID+"/orders/batch-retrieve").String(), req, &res); err != nil {
+	if err := c.i.Do(ctx, http.MethodPost, c.i.Endpoint("locations/"+req.LocationID+"/orders/batch-retrieve").String(), req, &res); err != nil {
 		return nil, fmt.Errorf("error performing http request: %w", err)
 	}
-	return res.Orders, nil
+	return externalRes, nil
 }

@@ -9,8 +9,8 @@ import (
 )
 
 type Client interface {
-	BatchRetrieve(ctx context.Context, locationID string, orderIDs []string) ([]*objects.Order, error)
-	Update(ctx context.Context, locationID, orderID string, order *objects.Order, fieldsToClear []string, idempotencyKey string) (*objects.Order, error)
+	BatchRetrieve(ctx context.Context, req *BatchRetrieveRequest) (*BatchRetrieveResponse, error)
+	Update(ctx context.Context, req *UpdateRequest) (*UpdateResponse, error)
 }
 
 type client struct {
