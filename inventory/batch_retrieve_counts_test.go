@@ -159,13 +159,16 @@ func TestBatchRetrieveInventoryCounts(t *testing.T) {
 		t.Fatalf("error creating square client: %v", err)
 	}
 
-	inventoryCounts := squareClient.BatchRetrieveCounts(context.Background(), &BatchRetrieveCountsRequest{
+	res, err := squareClient.BatchRetrieveCounts(context.Background(), &BatchRetrieveCountsRequest{
 		CatalogObjectIDs: catalogObjectIDs,
 		LocationIDs:      locationIDs,
 		UpdatedAfter:     &updatedAfter,
 	})
+	if err != nil {
+		t.Fatalf("unexpected error from batch retrieve counts: %v", err)
+	}
 
-	idx := 0
+	idx, inventoryCounts := 0, res.Counts
 	for inventoryCounts.Next() {
 		if inventoryCounts.Value().Count.CatalogObjectID != expectedCounts[idx].CatalogObjectID {
 			t.Fatalf("found catalog object id %s, expected %s", inventoryCounts.Value().Count.CatalogObjectID, expectedCounts[idx].CatalogObjectID)
@@ -224,18 +227,21 @@ func TestBatchRetrieveInventoryCountsClientError(t *testing.T) {
 		t.Fatalf("error creating square client: %v", err)
 	}
 
-	inventoryCounts := squareClient.BatchRetrieveCounts(context.Background(), &BatchRetrieveCountsRequest{
+	inventoryCounts, err := squareClient.BatchRetrieveCounts(context.Background(), &BatchRetrieveCountsRequest{
 		CatalogObjectIDs: catalogObjectIDs,
 		LocationIDs:      locationIDs,
 		UpdatedAfter:     &updatedAfter,
 	})
+	if err != nil {
+		return
+	}
 
 	idx := 0
-	for inventoryCounts.Next() {
+	for inventoryCounts.Counts.Next() {
 		idx++
 	}
 
-	if inventoryCounts.Error() == nil {
+	if inventoryCounts.Counts.Error() == nil {
 		t.Fatalf("expected error, found none")
 	}
 
@@ -274,29 +280,38 @@ func TestBatchRetrieveInventoryCountsErrorCode(t *testing.T) {
 		t.Fatalf("error creating square client: %v", err)
 	}
 
-	inventoryCounts := squareClient.BatchRetrieveCounts(context.Background(), &BatchRetrieveCountsRequest{
+	inventoryCounts, err := squareClient.BatchRetrieveCounts(context.Background(), &BatchRetrieveCountsRequest{
 		CatalogObjectIDs: catalogObjectIDs,
 		LocationIDs:      locationIDs,
 		UpdatedAfter:     &updatedAfter,
 	})
 
+	validateError := func(err error) {
+		var uerr objects.UnexpectedCodeError
+		if !errors.As(err, &uerr) {
+			t.Fatalf("error was not of type unexpectedCodeError")
+		}
+
+		if int(uerr) != http.StatusInternalServerError {
+			t.Fatalf("error code was not internal server error, found %v", int(uerr))
+		}
+	}
+
+	if err != nil {
+		validateError(err)
+		return
+	}
+
 	idx := 0
-	for inventoryCounts.Next() {
+	for inventoryCounts.Counts.Next() {
 		idx++
 	}
 
-	if inventoryCounts.Error() == nil {
+	if inventoryCounts.Counts.Error() == nil {
 		t.Fatalf("expected error, found none")
 	}
 
-	var uerr objects.UnexpectedCodeError
-	if !errors.As(inventoryCounts.Error(), &uerr) {
-		t.Fatalf("error was not of type unexpectedCodeError")
-	}
-
-	if int(uerr) != http.StatusInternalServerError {
-		t.Fatalf("error code was not internal server error, found %v", int(uerr))
-	}
+	validateError(inventoryCounts.Counts.Error())
 
 	if idx != 0 {
 		t.Fatalf("found %v items when 0 was expected", idx)
@@ -350,45 +365,54 @@ func TestBatchRetrieveInventoryCountsErrorMessage(t *testing.T) {
 		t.Fatalf("error creating square client: %v", err)
 	}
 
-	inventoryCounts := squareClient.BatchRetrieveCounts(context.Background(), &BatchRetrieveCountsRequest{
+	inventoryCounts, err := squareClient.BatchRetrieveCounts(context.Background(), &BatchRetrieveCountsRequest{
 		CatalogObjectIDs: catalogObjectIDs,
 		LocationIDs:      locationIDs,
 		UpdatedAfter:     &updatedAfter,
 	})
 
+	validateError := func(err error) {
+		serr := &objects.ErrorList{}
+		if !errors.As(err, &serr) {
+			t.Fatalf("error not of type square.Error")
+		}
+
+		if len(serr.Errors) != 1 {
+			t.Fatalf("found %v errors, expected %v", len(serr.Errors), 1)
+		}
+
+		if serr.Errors[0].Category != testError.Category {
+			t.Fatalf("found error category %s, expected %s", serr.Errors[0].Category, testError.Category)
+		}
+
+		if serr.Errors[0].Code != testError.Code {
+			t.Fatalf("found error code %s, expected %s", serr.Errors[0].Code, testError.Code)
+		}
+
+		if serr.Errors[0].Detail != testError.Detail {
+			t.Fatalf("found error detail %s, expected %s", serr.Errors[0].Detail, testError.Detail)
+		}
+
+		if serr.Errors[0].Field != testError.Field {
+			t.Fatalf("found error field %s, expected %s", serr.Errors[0].Field, testError.Field)
+		}
+	}
+
+	if err != nil {
+		validateError(err)
+		return
+	}
+
 	idx := 0
-	for inventoryCounts.Next() {
+	for inventoryCounts.Counts.Next() {
 		idx++
 	}
 
-	if inventoryCounts.Error() == nil {
+	if inventoryCounts.Counts.Error() == nil {
 		t.Fatalf("expected error, found none")
 	}
 
-	serr := &objects.ErrorList{}
-	if !errors.As(inventoryCounts.Error(), &serr) {
-		t.Fatalf("error not of type square.Error")
-	}
-
-	if len(serr.Errors) != 1 {
-		t.Fatalf("found %v errors, expected %v", len(serr.Errors), 1)
-	}
-
-	if serr.Errors[0].Category != testError.Category {
-		t.Fatalf("found error category %s, expected %s", serr.Errors[0].Category, testError.Category)
-	}
-
-	if serr.Errors[0].Code != testError.Code {
-		t.Fatalf("found error code %s, expected %s", serr.Errors[0].Code, testError.Code)
-	}
-
-	if serr.Errors[0].Detail != testError.Detail {
-		t.Fatalf("found error detail %s, expected %s", serr.Errors[0].Detail, testError.Detail)
-	}
-
-	if serr.Errors[0].Field != testError.Field {
-		t.Fatalf("found error field %s, expected %s", serr.Errors[0].Field, testError.Field)
-	}
+	validateError(inventoryCounts.Counts.Error())
 
 	if idx != 0 {
 		t.Fatalf("found %v items when 0 was expected", idx)

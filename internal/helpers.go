@@ -1,7 +1,9 @@
 package internal
 
 import (
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"net/url"
 
@@ -92,4 +94,39 @@ type WithErrors struct {
 
 func (w WithErrors) GetErrors() []*objects.Error {
 	return w.Errors
+}
+
+func ParseResponse(resp *http.Response, res interface{ GetErrors() []*objects.Error }) error {
+	var codeErr error
+	if resp.StatusCode != http.StatusOK {
+		codeErr = objects.UnexpectedCodeError(resp.StatusCode)
+	}
+
+	bytes, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		if codeErr != nil {
+			return codeErr //nolint:wrapcheck
+		}
+
+		return fmt.Errorf("error reading response body: %w", err)
+	}
+
+	err = json.Unmarshal(bytes, res)
+	if err != nil {
+		if codeErr != nil {
+			return codeErr //nolint:wrapcheck
+		}
+
+		return fmt.Errorf("error unmarshalling json response: %w", err)
+	}
+
+	if errs := res.GetErrors(); len(errs) != 0 {
+		return &objects.ErrorList{Errors: errs}
+	}
+
+	if codeErr != nil {
+		return codeErr //nolint:wrapcheck
+	}
+
+	return nil
 }
