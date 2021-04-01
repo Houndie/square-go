@@ -19,6 +19,16 @@ func NewIterator(newSegment func(string) (int, string, error)) *Iterator {
 	}
 }
 
+func NewIteratorWithValues(newSegment func(string) (int, string, error), startLength int, startCursor string) *Iterator {
+	return &Iterator{
+		newSegment:    newSegment,
+		idx:           -1,
+		segmentLength: startLength,
+		cursor:        startCursor,
+		done:          false,
+	}
+}
+
 func (i *Iterator) Error() error {
 	return i.err
 }

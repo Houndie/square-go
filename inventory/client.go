@@ -10,7 +10,7 @@ import (
 
 type Client interface {
 	BatchChange(ctx context.Context, req *BatchChangeRequest) (*BatchChangeResponse, error)
-	BatchRetrieveCounts(ctx context.Context, req *BatchRetrieveCountsRequest) BatchRetrieveCountsIterator
+	BatchRetrieveCounts(ctx context.Context, req *BatchRetrieveCountsRequest) (*BatchRetrieveCountsResponse, error)
 }
 
 type client struct {

@@ -42,7 +42,7 @@ func TestListCatalog(t *testing.T) {
 			PresentAtAllLocations: true,
 			PresentAtLocationIDs:  nil,
 			ImageID:               "some image id",
-			CatalogObjectType: &objects.CatalogTax{
+			Type: &objects.CatalogTax{
 				Name:                   "tax",
 				CalculationPhase:       "phase",
 				InclusionType:          "inclusion",
@@ -60,7 +60,7 @@ func TestListCatalog(t *testing.T) {
 			PresentAtAllLocations: false,
 			PresentAtLocationIDs:  []string{"location 1", "location 2"},
 			ImageID:               "some other image id",
-			CatalogObjectType: &objects.CatalogModifier{
+			Type: &objects.CatalogModifier{
 				Name: "modifier",
 				PriceMoney: &objects.Money{
 					Amount:   3,
@@ -144,18 +144,21 @@ func TestListCatalog(t *testing.T) {
 		t.Fatalf("error creating square client: %v", err)
 	}
 
-	catalogObjects := catalogClient.List(context.Background(), &ListRequest{Types: types})
+	catalogObjects, err := catalogClient.List(context.Background(), &ListRequest{Types: types})
+	if err != nil {
+		t.Fatalf("found unexpected error: %v", err)
+	}
 
 	idx := 0
-	for catalogObjects.Next() {
-		if !cmp.Equal(catalogObjects.Value().Object, expectedObjects[idx], cmpopts.IgnoreUnexported()) {
-			t.Fatalf("found unexpected catalog item %s, expected %s", spew.Sdump(catalogObjects.Value()), spew.Sdump(expectedObjects[idx]))
+	for catalogObjects.Objects.Next() {
+		if !cmp.Equal(catalogObjects.Objects.Value().Object, expectedObjects[idx], cmpopts.IgnoreUnexported()) {
+			t.Fatalf("found unexpected catalog item %s, expected %s", spew.Sdump(catalogObjects.Objects.Value()), spew.Sdump(expectedObjects[idx]))
 		}
 		idx++
 	}
 
-	if catalogObjects.Error() != nil {
-		t.Fatalf("found unexpected error: %v", catalogObjects.Error())
+	if catalogObjects.Objects.Error() != nil {
+		t.Fatalf("found unexpected error: %v", catalogObjects.Objects.Error())
 	}
 
 	if callCount != 2 {
@@ -189,14 +192,17 @@ func TestListCatalogClientError(t *testing.T) {
 		t.Fatalf("error creating square client: %v", err)
 	}
 
-	catalogObjects := catalogClient.List(context.Background(), &ListRequest{Types: types})
+	catalogObjects, err := catalogClient.List(context.Background(), &ListRequest{Types: types})
+	if err != nil {
+		return
+	}
 
 	idx := 0
-	for catalogObjects.Next() {
+	for catalogObjects.Objects.Next() {
 		idx++
 	}
 
-	if catalogObjects.Error() == nil {
+	if catalogObjects.Objects.Error() == nil {
 		t.Fatal("Expected error, found none")
 	}
 
@@ -236,24 +242,31 @@ func TestListCatalogHttpError(t *testing.T) {
 		t.Fatalf("error creating square client: %v", err)
 	}
 
-	catalogObjects := catalogClient.List(context.Background(), &ListRequest{Types: types})
+	catalogObjects, err := catalogClient.List(context.Background(), &ListRequest{Types: types})
+
+	validateError := func(err error) {
+		var uerr objects.UnexpectedCodeError
+		if !errors.As(err, &uerr) {
+			t.Fatalf("error was not of type unexpectedCodeError")
+		}
+
+		if int(uerr) != http.StatusInternalServerError {
+			t.Fatalf("error code was not internal server error, found %v", int(uerr))
+		}
+	}
+
+	if err != nil {
+		validateError(err)
+		return
+	}
 
 	idx := 0
-	for catalogObjects.Next() {
+	for catalogObjects.Objects.Next() {
 		idx++
 	}
 
-	if catalogObjects.Error() == nil {
+	if catalogObjects.Objects.Error() == nil {
 		t.Fatal("Expected error, found none")
-	}
-
-	var uerr objects.UnexpectedCodeError
-	if !errors.As(catalogObjects.Error(), &uerr) {
-		t.Fatalf("error was not of type unexpectedCodeError")
-	}
-
-	if int(uerr) != http.StatusInternalServerError {
-		t.Fatalf("error code was not internal server error, found %v", int(uerr))
 	}
 
 	if idx != 0 {
@@ -309,24 +322,31 @@ func TestListCatalogErrorMessage(t *testing.T) {
 		t.Fatalf("error creating square client: %v", err)
 	}
 
-	catalogObjects := catalogClient.List(context.Background(), &ListRequest{Types: types})
+	catalogObjects, err := catalogClient.List(context.Background(), &ListRequest{Types: types})
+
+	validateError := func(err error) {
+		serr := &objects.ErrorList{}
+		if !errors.As(err, &serr) {
+			t.Fatalf("error not of type square.ErrorList")
+		}
+
+		if !cmp.Equal(serr.Errors[0], testError, cmpopts.IgnoreUnexported()) {
+			t.Fatalf("expected error %s, found %s", spew.Sdump(serr.Errors[0]), spew.Sdump(testError))
+		}
+	}
+
+	if err != nil {
+		validateError(err)
+		return
+	}
 
 	idx := 0
-	for catalogObjects.Next() {
+	for catalogObjects.Objects.Next() {
 		idx++
 	}
 
-	if catalogObjects.Error() == nil {
+	if catalogObjects.Objects.Error() == nil {
 		t.Fatal("Expected error, found none")
-	}
-
-	serr := &objects.ErrorList{}
-	if !errors.As(catalogObjects.Error(), &serr) {
-		t.Fatalf("error not of type square.ErrorList")
-	}
-
-	if !cmp.Equal(serr.Errors[0], testError, cmpopts.IgnoreUnexported()) {
-		t.Fatalf("expected error %s, found %s", spew.Sdump(serr.Errors[0]), spew.Sdump(testError))
 	}
 
 	if idx != 0 {

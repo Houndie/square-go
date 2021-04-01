@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"path"
@@ -15,7 +14,7 @@ import (
 )
 
 type Client struct {
-	httpClient   *http.Client
+	HTTPClient   *http.Client
 	endpointBase *url.URL
 }
 
@@ -26,12 +25,12 @@ func NewClient(apiKey string, environment objects.Environment, httpClient *http.
 	}
 
 	return &Client{
-		httpClient:   makeHTTPClient(apiKey, httpClient),
+		HTTPClient:   makeHTTPClient(apiKey, httpClient),
 		endpointBase: endpoint,
 	}, nil
 }
 
-func (c *Client) endpoint(e string) *url.URL {
+func (c *Client) Endpoint(e string) *url.URL {
 	return &url.URL{
 		Scheme: c.endpointBase.Scheme,
 		User:   c.endpointBase.User,
@@ -47,7 +46,7 @@ func (c *Client) Do(ctx context.Context, method, path string, req interface{}, r
 	)
 
 	if method == http.MethodGet {
-		u := c.endpoint(path)
+		u := c.Endpoint(path)
 		q := u.Query()
 
 		if err := Encoder.Encode(req, q); err != nil {
@@ -58,7 +57,7 @@ func (c *Client) Do(ctx context.Context, method, path string, req interface{}, r
 		endpoint = u.String()
 		bodyBuf = nil
 	} else {
-		endpoint = c.endpoint(path).String()
+		endpoint = c.Endpoint(path).String()
 		reqBodyBytes, err := json.Marshal(&req)
 		if err != nil {
 			return fmt.Errorf("error marshaling request body: %w", err)
@@ -74,41 +73,14 @@ func (c *Client) Do(ctx context.Context, method, path string, req interface{}, r
 
 	httpReq = httpReq.WithContext(ctx)
 
-	resp, err := c.httpClient.Do(httpReq)
+	resp, err := c.HTTPClient.Do(httpReq)
 	if err != nil {
 		return fmt.Errorf("error with http request: %w", err)
 	}
 	defer resp.Body.Close()
 
-	var codeErr error
-	if resp.StatusCode != http.StatusOK {
-		codeErr = objects.UnexpectedCodeError(resp.StatusCode)
-	}
-
-	bytes, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		if codeErr != nil {
-			return codeErr //nolint:wrapcheck
-		}
-
-		return fmt.Errorf("error reading response body: %w", err)
-	}
-
-	err = json.Unmarshal(bytes, res)
-	if err != nil {
-		if codeErr != nil {
-			return codeErr //nolint:wrapcheck
-		}
-
-		return fmt.Errorf("error unmarshalling json response: %w", err)
-	}
-
-	if errs := res.GetErrors(); len(errs) != 0 {
-		return &objects.ErrorList{Errors: errs}
-	}
-
-	if codeErr != nil {
-		return codeErr //nolint:wrapcheck
+	if err := ParseResponse(resp, res); err != nil {
+		return fmt.Errorf("error parsing response body: %w", err)
 	}
 
 	return nil
