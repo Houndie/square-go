@@ -8,33 +8,33 @@ import (
 	"errors"
 )
 
-type CatalogObjectType string
+type CatalogObjectEnumType string
 
 const (
-	CatalogObjectTypeItem                      CatalogObjectType = "ITEM"
-	CatalogObjectTypeImage                     CatalogObjectType = "IMAGE"
-	CatalogObjectTypeCategory                  CatalogObjectType = "CATEGORY"
-	CatalogObjectTypeItemVariation             CatalogObjectType = "ITEM_VARIATION"
-	CatalogObjectTypeTax                       CatalogObjectType = "TAX"
-	CatalogObjectTypeDiscount                  CatalogObjectType = "DISCOUNT"
-	CatalogObjectTypeModifierList              CatalogObjectType = "MODIFIER_LIST"
-	CatalogObjectTypeModifier                  CatalogObjectType = "MODIFIER"
-	CatalogObjectTypePricingRule               CatalogObjectType = "PRICING_RULE"
-	CatalogObjectTypeProductSet                CatalogObjectType = "PRODUCT_SET"
-	CatalogObjectTypeTimePeriod                CatalogObjectType = "TIME_PERIOD"
-	CatalogObjectTypeMeasurementUnit           CatalogObjectType = "MEASUREMENT_UNIT"
-	CatalogObjectTypeSubscriptionPlan          CatalogObjectType = "SUBSCRIPTION_PLAN"
-	CatalogObjectTypeItemOption                CatalogObjectType = "ITEM_OPTION"
-	CatalogObjectTypeItemOptionVal             CatalogObjectType = "ITEM_OPTION_VAL"
-	CatalogObjectTypeCustomAttributeDefinition CatalogObjectType = "CUSTOM_ATTRIBUTE_DEFINITION"
-	CatalogObjectTypeQuickAmountsSettings      CatalogObjectType = "QUICK_AMOUNTS_SETTINGS"
+	CatalogObjectEnumTypeItem                      CatalogObjectEnumType = "ITEM"
+	CatalogObjectEnumTypeImage                     CatalogObjectEnumType = "IMAGE"
+	CatalogObjectEnumTypeCategory                  CatalogObjectEnumType = "CATEGORY"
+	CatalogObjectEnumTypeItemVariation             CatalogObjectEnumType = "ITEM_VARIATION"
+	CatalogObjectEnumTypeTax                       CatalogObjectEnumType = "TAX"
+	CatalogObjectEnumTypeDiscount                  CatalogObjectEnumType = "DISCOUNT"
+	CatalogObjectEnumTypeModifierList              CatalogObjectEnumType = "MODIFIER_LIST"
+	CatalogObjectEnumTypeModifier                  CatalogObjectEnumType = "MODIFIER"
+	CatalogObjectEnumTypePricingRule               CatalogObjectEnumType = "PRICING_RULE"
+	CatalogObjectEnumTypeProductSet                CatalogObjectEnumType = "PRODUCT_SET"
+	CatalogObjectEnumTypeTimePeriod                CatalogObjectEnumType = "TIME_PERIOD"
+	CatalogObjectEnumTypeMeasurementUnit           CatalogObjectEnumType = "MEASUREMENT_UNIT"
+	CatalogObjectEnumTypeSubscriptionPlan          CatalogObjectEnumType = "SUBSCRIPTION_PLAN"
+	CatalogObjectEnumTypeItemOption                CatalogObjectEnumType = "ITEM_OPTION"
+	CatalogObjectEnumTypeItemOptionVal             CatalogObjectEnumType = "ITEM_OPTION_VAL"
+	CatalogObjectEnumTypeCustomAttributeDefinition CatalogObjectEnumType = "CUSTOM_ATTRIBUTE_DEFINITION"
+	CatalogObjectEnumTypeQuickAmountsSettings      CatalogObjectEnumType = "QUICK_AMOUNTS_SETTINGS"
 )
 
 type catalogObjectAlias CatalogObject
 
 type catalogObject struct {
 	*catalogObjectAlias
-	Type                          CatalogObjectType                 `json:"type,omitempty"`
+	Type                          CatalogObjectEnumType             `json:"type,omitempty"`
 	ItemData                      *CatalogItem                      `json:"item_data,omitempty"`
 	CategoryData                  *CatalogCategory                  `json:"category_data,omitempty"`
 	ItemVariationData             *CatalogItemVariation             `json:"item_variation_data,omitempty"`
@@ -54,7 +54,7 @@ type catalogObject struct {
 	QuickAmountsSettingsData      *CatalogQuickAmountsSettings      `json:"quick_amounts_settings_data,omitempty"`
 }
 
-type catalogObjectType interface {
+type CatalogObjectType interface {
 	isCatalogObjectType()
 }
 
@@ -69,7 +69,7 @@ type CatalogObject struct {
 	PresentAtLocationIDs  []string                                `json:"present_at_location_ids,omitempty"`
 	AbsentAtLocationIDs   []string                                `json:"absent_at_location_ids,omitempty"`
 	ImageID               string                                  `json:"image_id,omitempty"`
-	Type                  catalogObjectType                       `json:"-"`
+	Type                  CatalogObjectType                       `json:"-"`
 }
 
 func (c *CatalogObject) MarshalJSON() ([]byte, error) {
@@ -79,55 +79,55 @@ func (c *CatalogObject) MarshalJSON() ([]byte, error) {
 	switch t := c.Type.(type) {
 	case *CatalogItem:
 		cJSON.ItemData = t
-		cJSON.Type = CatalogObjectTypeItem
+		cJSON.Type = CatalogObjectEnumTypeItem
 	case *CatalogCategory:
 		cJSON.CategoryData = t
-		cJSON.Type = CatalogObjectTypeCategory
+		cJSON.Type = CatalogObjectEnumTypeCategory
 	case *CatalogItemVariation:
 		cJSON.ItemVariationData = t
-		cJSON.Type = CatalogObjectTypeItemVariation
+		cJSON.Type = CatalogObjectEnumTypeItemVariation
 	case *CatalogTax:
 		cJSON.TaxData = t
-		cJSON.Type = CatalogObjectTypeTax
+		cJSON.Type = CatalogObjectEnumTypeTax
 	case *CatalogDiscount:
 		cJSON.DiscountData = t
-		cJSON.Type = CatalogObjectTypeDiscount
+		cJSON.Type = CatalogObjectEnumTypeDiscount
 	case *CatalogModifierList:
 		cJSON.ModifierListData = t
-		cJSON.Type = CatalogObjectTypeModifierList
+		cJSON.Type = CatalogObjectEnumTypeModifierList
 	case *CatalogModifier:
 		cJSON.ModifierData = t
-		cJSON.Type = CatalogObjectTypeModifier
+		cJSON.Type = CatalogObjectEnumTypeModifier
 	case *CatalogImage:
 		cJSON.ImageData = t
-		cJSON.Type = CatalogObjectTypeImage
+		cJSON.Type = CatalogObjectEnumTypeImage
 	case *CatalogMeasurementUnit:
 		cJSON.MeasurementUnitData = t
-		cJSON.Type = CatalogObjectTypeMeasurementUnit
+		cJSON.Type = CatalogObjectEnumTypeMeasurementUnit
 	case *CatalogTimePeriod:
 		cJSON.TimePeriodData = t
-		cJSON.Type = CatalogObjectTypeTimePeriod
+		cJSON.Type = CatalogObjectEnumTypeTimePeriod
 	case *CatalogProductSet:
 		cJSON.ProductSetData = t
-		cJSON.Type = CatalogObjectTypeProductSet
+		cJSON.Type = CatalogObjectEnumTypeProductSet
 	case *CatalogPricingRule:
 		cJSON.PricingRuleData = t
-		cJSON.Type = CatalogObjectTypePricingRule
+		cJSON.Type = CatalogObjectEnumTypePricingRule
 	case *CatalogSubscriptionPlan:
 		cJSON.SubscriptionPlanData = t
-		cJSON.Type = CatalogObjectTypeSubscriptionPlan
+		cJSON.Type = CatalogObjectEnumTypeSubscriptionPlan
 	case *CatalogItemOption:
 		cJSON.ItemOptionData = t
-		cJSON.Type = CatalogObjectTypeItemOption
+		cJSON.Type = CatalogObjectEnumTypeItemOption
 	case *CatalogItemOptionValue:
 		cJSON.ItemOptionValueData = t
-		cJSON.Type = CatalogObjectTypeItemOptionVal
+		cJSON.Type = CatalogObjectEnumTypeItemOptionVal
 	case *CatalogCustomAttributeDefinition:
 		cJSON.CustomAttributeDefinitionData = t
-		cJSON.Type = CatalogObjectTypeCustomAttributeDefinition
+		cJSON.Type = CatalogObjectEnumTypeCustomAttributeDefinition
 	case *CatalogQuickAmountsSettings:
 		cJSON.QuickAmountsSettingsData = t
-		cJSON.Type = CatalogObjectTypeQuickAmountsSettings
+		cJSON.Type = CatalogObjectEnumTypeQuickAmountsSettings
 	default:
 		return nil, errors.New("found unknown catalog object data type")
 	}
@@ -151,39 +151,39 @@ func (c *CatalogObject) UnmarshalJSON(data []byte) error {
 	}
 
 	switch cJSON.Type {
-	case CatalogObjectTypeItem:
+	case CatalogObjectEnumTypeItem:
 		c.Type = cJSON.ItemData
-	case CatalogObjectTypeCategory:
+	case CatalogObjectEnumTypeCategory:
 		c.Type = cJSON.CategoryData
-	case CatalogObjectTypeItemVariation:
+	case CatalogObjectEnumTypeItemVariation:
 		c.Type = cJSON.ItemVariationData
-	case CatalogObjectTypeTax:
+	case CatalogObjectEnumTypeTax:
 		c.Type = cJSON.TaxData
-	case CatalogObjectTypeDiscount:
+	case CatalogObjectEnumTypeDiscount:
 		c.Type = cJSON.DiscountData
-	case CatalogObjectTypeModifierList:
+	case CatalogObjectEnumTypeModifierList:
 		c.Type = cJSON.ModifierListData
-	case CatalogObjectTypeModifier:
+	case CatalogObjectEnumTypeModifier:
 		c.Type = cJSON.ModifierData
-	case CatalogObjectTypeImage:
+	case CatalogObjectEnumTypeImage:
 		c.Type = cJSON.ImageData
-	case CatalogObjectTypeMeasurementUnit:
+	case CatalogObjectEnumTypeMeasurementUnit:
 		c.Type = cJSON.MeasurementUnitData
-	case CatalogObjectTypeTimePeriod:
+	case CatalogObjectEnumTypeTimePeriod:
 		c.Type = cJSON.TimePeriodData
-	case CatalogObjectTypeProductSet:
+	case CatalogObjectEnumTypeProductSet:
 		c.Type = cJSON.ProductSetData
-	case CatalogObjectTypePricingRule:
+	case CatalogObjectEnumTypePricingRule:
 		c.Type = cJSON.PricingRuleData
-	case CatalogObjectTypeSubscriptionPlan:
+	case CatalogObjectEnumTypeSubscriptionPlan:
 		c.Type = cJSON.SubscriptionPlanData
-	case CatalogObjectTypeItemOption:
+	case CatalogObjectEnumTypeItemOption:
 		c.Type = cJSON.ItemOptionData
-	case CatalogObjectTypeItemOptionVal:
+	case CatalogObjectEnumTypeItemOptionVal:
 		c.Type = cJSON.ItemOptionValueData
-	case CatalogObjectTypeCustomAttributeDefinition:
+	case CatalogObjectEnumTypeCustomAttributeDefinition:
 		c.Type = cJSON.CustomAttributeDefinitionData
-	case CatalogObjectTypeQuickAmountsSettings:
+	case CatalogObjectEnumTypeQuickAmountsSettings:
 		c.Type = cJSON.QuickAmountsSettingsData
 	default:
 		return fmt.Errorf("found unknown catalog object type %s", cJSON.Type)

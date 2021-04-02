@@ -25,9 +25,9 @@ func TestListCatalog(t *testing.T) {
 	t.Parallel()
 
 	apiKey := "some api key"
-	types := []objects.CatalogObjectType{
-		objects.CatalogObjectTypeTax,
-		objects.CatalogObjectTypeModifier,
+	types := []objects.CatalogObjectEnumType{
+		objects.CatalogObjectEnumTypeTax,
+		objects.CatalogObjectEnumTypeModifier,
 	}
 
 	updatedAt := time.Unix(1235634, 0)
@@ -97,7 +97,7 @@ func TestListCatalog(t *testing.T) {
 				for _, controlType := range types {
 					found := false
 					for _, testType := range strings.Split(urlParams.Types, ",") {
-						if controlType == objects.CatalogObjectType(testType) {
+						if controlType == objects.CatalogObjectEnumType(testType) {
 							found = true
 							break
 						}
@@ -174,9 +174,9 @@ func TestListCatalogClientError(t *testing.T) {
 	t.Parallel()
 
 	apiKey := "some api key"
-	types := []objects.CatalogObjectType{
-		objects.CatalogObjectTypeTax,
-		objects.CatalogObjectTypeModifier,
+	types := []objects.CatalogObjectEnumType{
+		objects.CatalogObjectEnumTypeTax,
+		objects.CatalogObjectEnumTypeModifier,
 	}
 
 	client := &http.Client{
@@ -215,9 +215,9 @@ func TestListCatalogHttpError(t *testing.T) {
 	t.Parallel()
 
 	apiKey := "some api key"
-	types := []objects.CatalogObjectType{
-		objects.CatalogObjectTypeTax,
-		objects.CatalogObjectTypeModifier,
+	types := []objects.CatalogObjectEnumType{
+		objects.CatalogObjectEnumTypeTax,
+		objects.CatalogObjectEnumTypeModifier,
 	}
 
 	client := &http.Client{
@@ -278,9 +278,9 @@ func TestListCatalogErrorMessage(t *testing.T) {
 	t.Parallel()
 
 	apiKey := "some api key"
-	types := []objects.CatalogObjectType{
-		objects.CatalogObjectTypeTax,
-		objects.CatalogObjectTypeModifier,
+	types := []objects.CatalogObjectEnumType{
+		objects.CatalogObjectEnumTypeTax,
+		objects.CatalogObjectEnumTypeModifier,
 	}
 
 	testError := &objects.Error{

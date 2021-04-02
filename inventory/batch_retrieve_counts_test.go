@@ -32,7 +32,7 @@ func TestBatchRetrieveInventoryCounts(t *testing.T) {
 	expectedCounts := []*objects.InventoryCount{
 		&objects.InventoryCount{
 			CatalogObjectID:   catalogObjectIDs[0],
-			CatalogObjectType: objects.CatalogObjectTypeItemVariation,
+			CatalogObjectType: objects.CatalogObjectEnumTypeItemVariation,
 			State:             "OH",
 			LocationID:        locationIDs[0],
 			Quantity:          "7",
@@ -40,7 +40,7 @@ func TestBatchRetrieveInventoryCounts(t *testing.T) {
 		},
 		&objects.InventoryCount{
 			CatalogObjectID:   catalogObjectIDs[1],
-			CatalogObjectType: objects.CatalogObjectTypeItemVariation,
+			CatalogObjectType: objects.CatalogObjectEnumTypeItemVariation,
 			State:             "PA",
 			LocationID:        locationIDs[1],
 			Quantity:          "3.4",

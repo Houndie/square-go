@@ -20,10 +20,10 @@ const (
 )
 
 type InventoryCount struct {
-	CatalogObjectID   string            `json:"catalog_object_id,omitempty"`
-	CatalogObjectType CatalogObjectType `json:"catalog_object_type,omitempty"`
-	State             InventoryState    `json:"state,omitempty"`
-	LocationID        string            `json:"location_id,omitempty"`
-	Quantity          string            `json:"quantity,omitempty"`
-	CalculatedAt      *time.Time        `json:"calculated_at,omitempty"`
+	CatalogObjectID   string                `json:"catalog_object_id,omitempty"`
+	CatalogObjectType CatalogObjectEnumType `json:"catalog_object_type,omitempty"`
+	State             InventoryState        `json:"state,omitempty"`
+	LocationID        string                `json:"location_id,omitempty"`
+	Quantity          string                `json:"quantity,omitempty"`
+	CalculatedAt      *time.Time            `json:"calculated_at,omitempty"`
 }
