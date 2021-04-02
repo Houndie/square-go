@@ -79,7 +79,7 @@ func (*CatalogCustomAttributeDefinitionTypeNumber) isCatalogCustomAttributeDefin
 func (*CatalogCustomAttributeDefinitionTypeSelection) isCatalogCustomAttributeDefinitionType() {}
 
 type CatalogCustomAttributeDefinition struct {
-	AllowedObjectTypes        CatalogObjectType                                `json:"allowed_object_types,omitempty"`
+	AllowedObjectTypes        CatalogObjectEnumType                            `json:"allowed_object_types,omitempty"`
 	Name                      string                                           `json:"name,omitempty"`
 	Type                      CatalogCustomAttributeDefinitionType             `json:"-"`
 	AppVisibility             CatalogCustomAttributeDefinitionAppVisibility    `json:"app_visibility,omitempty"`

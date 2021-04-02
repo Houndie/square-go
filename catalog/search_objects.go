@@ -11,11 +11,11 @@ import (
 )
 
 type SearchObjectsRequest struct {
-	ObjectTypes           []objects.CatalogObjectType `json:"object_types,omitempty"`
-	IncludeDeletedObjects bool                        `json:"include_deleted_objects,omitempty"`
-	BeginTime             *time.Time                  `json:"begin_time,omitempty"`
-	Query                 *objects.CatalogQuery       `json:"query,omitempty"`
-	Limit                 int                         `json:"limit,omitempty"`
+	ObjectTypes           []objects.CatalogObjectEnumType `json:"object_types,omitempty"`
+	IncludeDeletedObjects bool                            `json:"include_deleted_objects,omitempty"`
+	BeginTime             *time.Time                      `json:"begin_time,omitempty"`
+	Query                 *objects.CatalogQuery           `json:"query,omitempty"`
+	Limit                 int                             `json:"limit,omitempty"`
 }
 
 type SearchObjectsIteratorValue struct {

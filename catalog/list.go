@@ -34,7 +34,7 @@ func (i *listIterator) Next() bool {
 }
 
 type ListRequest struct {
-	Types []objects.CatalogObjectType
+	Types []objects.CatalogObjectEnumType
 }
 
 type ListIteratorValue struct {
