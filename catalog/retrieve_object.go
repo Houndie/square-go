@@ -29,7 +29,7 @@ func (c *client) RetrieveObject(ctx context.Context, req *RetrieveObjectRequest)
 		RetrieveObjectResponse: externalRes,
 	}
 
-	if err := c.i.Do(ctx, http.MethodGet, "/catalog/object/"+req.ObjectID, nil, &res); err != nil {
+	if err := c.i.Do(ctx, http.MethodGet, "/catalog/object/"+req.ObjectID, req, &res); err != nil {
 		return nil, fmt.Errorf("error performing http request: %w", err)
 	}
 
