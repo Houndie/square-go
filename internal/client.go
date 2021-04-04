@@ -63,7 +63,9 @@ func (c *Client) Do(ctx context.Context, method, path string, req interface{}, r
 			return fmt.Errorf("error marshaling request body: %w", err)
 		}
 
-		bodyBuf = bytes.NewBuffer(reqBodyBytes)
+		if string(reqBodyBytes) != "null" {
+			bodyBuf = bytes.NewBuffer(reqBodyBytes)
+		}
 	}
 
 	httpReq, err := http.NewRequest(method, endpoint, bodyBuf)
