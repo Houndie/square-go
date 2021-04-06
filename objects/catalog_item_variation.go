@@ -47,7 +47,7 @@ func (*InventoryAlertTypeLowQuantity) isInventoryAlertType() {}
 type ItemVariationLocationOverrides struct {
 	LocationID         string             `json:"location_id,omitempty"`
 	PriceMoney         *Money             `json:"price_money,omitempty"`
-	PricingType        string             `json:"pricing_type,omitempty"`
+	PricingType        CatalogPricingType `json:"pricing_type,omitempty"`
 	TrackInventory     bool               `json:"track_inventory,omitempty"`
 	InventoryAlertType InventoryAlertType `json:"-"`
 }
