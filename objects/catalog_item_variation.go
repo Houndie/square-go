@@ -1,5 +1,10 @@
 package objects
 
+import (
+	"encoding/json"
+	"fmt"
+)
+
 type CatalogPricingType string
 
 const (
@@ -27,13 +32,85 @@ type CatalogItemVariation struct {
 	TeamMemberIDs           []string                                  `json:"team_member_ids,omitempty"`
 }
 
+type InventoryAlertType interface {
+	isInventoryAlertType()
+}
+
+type InventoryAlertTypeNone struct{}
+type InventoryAlertTypeLowQuantity struct {
+	Threshold int
+}
+
+func (*InventoryAlertTypeNone) isInventoryAlertType()        {}
+func (*InventoryAlertTypeLowQuantity) isInventoryAlertType() {}
+
 type ItemVariationLocationOverrides struct {
-	LocationID              string `json:"location_id,omitempty"`
-	PriceMoney              *Money `json:"price_money,omitempty"`
-	PricingType             string `json:"pricing_type,omitempty"`
-	TrackInventory          bool   `json:"track_inventory,omitempty"`
-	InventoryAlertType      string `json:"inventory_alert_type,omitempty"`
-	InventoryAlertThreshold int    `json:"inventory_alert_threshold,omitempty"`
+	LocationID         string             `json:"location_id,omitempty"`
+	PriceMoney         *Money             `json:"price_money,omitempty"`
+	PricingType        string             `json:"pricing_type,omitempty"`
+	TrackInventory     bool               `json:"track_inventory,omitempty"`
+	InventoryAlertType InventoryAlertType `json:"-"`
+}
+
+type itemVariationLocationOverridesAlias ItemVariationLocationOverrides
+
+type inventoryAlertType string
+
+const (
+	inventoryAlertTypeNone        inventoryAlertType = "NONE"
+	inventoryAlertTypeLowQuantity inventoryAlertType = "LOW_QUANTITY"
+)
+
+type itemVariationLocationOverrides struct {
+	*itemVariationLocationOverridesAlias
+	InventoryAlertType      inventoryAlertType `json:"inventory_alert_type,omitempty"`
+	InventoryAlertThreshold int                `json:"inventory_alert_threshold,omitempty"`
+}
+
+func (o *ItemVariationLocationOverrides) MarshalJSON() ([]byte, error) {
+	jsonType := itemVariationLocationOverrides{
+		itemVariationLocationOverridesAlias: (*itemVariationLocationOverridesAlias)(o),
+	}
+
+	switch t := o.InventoryAlertType.(type) {
+	case *InventoryAlertTypeNone:
+		jsonType.InventoryAlertType = inventoryAlertTypeNone
+	case *InventoryAlertTypeLowQuantity:
+		jsonType.InventoryAlertType = inventoryAlertTypeLowQuantity
+		jsonType.InventoryAlertThreshold = t.Threshold
+	default:
+		return nil, fmt.Errorf("unknown inventory alert type found")
+	}
+
+	b, err := json.Marshal(jsonType)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling item variation location overrides: %w", err)
+	}
+
+	return b, nil
+}
+
+func (o *ItemVariationLocationOverrides) UnmarshalJSON(bytes []byte) error {
+	jsonType := itemVariationLocationOverrides{
+		itemVariationLocationOverridesAlias: (*itemVariationLocationOverridesAlias)(o),
+	}
+
+	if err := json.Unmarshal(bytes, &jsonType); err != nil {
+		return fmt.Errorf("error unmarshaling item variation location overrides: %w", err)
+	}
+
+	switch jsonType.InventoryAlertType {
+	case inventoryAlertTypeNone:
+		o.InventoryAlertType = &InventoryAlertTypeNone{}
+	case inventoryAlertTypeLowQuantity:
+		o.InventoryAlertType = &InventoryAlertTypeLowQuantity{
+			Threshold: jsonType.InventoryAlertThreshold,
+		}
+	default:
+		return fmt.Errorf("unknown inventory alert type found: %s", jsonType.InventoryAlertType)
+	}
+
+	return nil
 }
 
 type CatalogItemOptionValueForItemVariation struct {
