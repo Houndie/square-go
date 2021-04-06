@@ -5,7 +5,7 @@ type CatalogItemModifierListInfo struct {
 	ModifierOverrides    []*CatalogModifierOverride `json:"modifier_overrides,omitempty"`
 	MinSelectedModifiers int                        `json:"min_selected_modifiers,omitempty"`
 	MaxSelectedModifiers int                        `json:"max_selected_modifiers,omitempty"`
-	Enabled              bool                       `json:"enabled,omitempty"`
+	Enabled              *bool                      `json:"enabled,omitempty"`
 }
 
 type CatalogModifierOverride struct {
