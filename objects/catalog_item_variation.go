@@ -15,8 +15,8 @@ const (
 type CatalogItemVariation struct {
 	ItemID              string                                    `json:"item_id,omitempty"`
 	Name                string                                    `json:"name,omitempty"`
-	Sku                 string                                    `json:"sku,omitempty"`
-	Upc                 string                                    `json:"string,omitempty"`
+	SKU                 string                                    `json:"sku,omitempty"`
+	UPC                 string                                    `json:"upc,omitempty"`
 	Ordinal             int                                       `json:"ordinal,omitempty"`
 	PricingType         CatalogPricingType                        `json:"pricing_type,omitempty"`
 	PriceMoney          *Money                                    `json:"price_money,omitempty"`
