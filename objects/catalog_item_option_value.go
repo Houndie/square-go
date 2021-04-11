@@ -5,7 +5,7 @@ type CatalogItemOptionValue struct {
 	Description  string `json:"description,omitempty"`
 	ItemOptionID string `json:"item_option_id,omitempty"`
 	Name         string `json:"name,omitempty"`
-	Ordinal      string `json:"ordinal,omitempty"`
+	Ordinal      int    `json:"ordinal,omitempty"`
 }
 
 func (*CatalogItemOptionValue) isCatalogObjectType() {}
