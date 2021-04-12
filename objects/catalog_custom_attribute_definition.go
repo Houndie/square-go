@@ -41,12 +41,12 @@ type catalogCustomAttributeDefinition struct {
 type catalogCustomAttributeDefinitionAlias CatalogCustomAttributeDefinition
 
 type CatalogCustomAttributeDefinitionNumberConfig struct {
-	Precision int `json:"precision,omitempty"`
+	Precision *int `json:"precision,omitempty"`
 }
 
 type CatalogCustomAttributeDefinitionSelectionConfig struct {
 	AllowedSelections    []*CatalogCustomAttributeDefinitionSelectionConfigCustomAttributeSelection `json:"allowed_selections,omitempty"`
-	MaxAllowedSelections int                                                                        `json:"max_allowed_selections,omitempty"`
+	MaxAllowedSelections *int                                                                       `json:"max_allowed_selections,omitempty"`
 }
 
 type CatalogCustomAttributeDefinitionSelectionConfigCustomAttributeSelection struct {
