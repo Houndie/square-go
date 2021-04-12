@@ -18,9 +18,9 @@ const (
 type CatalogCustomAttributeDefinitionAppVisibility string
 
 const (
-	CatalogCustomAttributeDefinitionAppVisibilityHidden      CatalogCustomAttributeDefinitionAppVisibility = "APP_VISIBILITY_HIDDEN"
-	CatalogCustomAttributeDefinitionAppVisibilityReadOnly    CatalogCustomAttributeDefinitionAppVisibility = "APP_VISIBILITY_READ_ONLY"
-	CatalogCustomAttributeDefinitionAppVisibilityWriteValues CatalogCustomAttributeDefinitionAppVisibility = "APP_VISIBILITY_WRITE_VALUES"
+	CatalogCustomAttributeDefinitionAppVisibilityHidden          CatalogCustomAttributeDefinitionAppVisibility = "APP_VISIBILITY_HIDDEN"
+	CatalogCustomAttributeDefinitionAppVisibilityReadOnly        CatalogCustomAttributeDefinitionAppVisibility = "APP_VISIBILITY_READ_ONLY"
+	CatalogCustomAttributeDefinitionAppVisibilityReadWriteValues CatalogCustomAttributeDefinitionAppVisibility = "APP_VISIBILITY_READ_WRITE_VALUES"
 )
 
 type CatalogCustomAttributeDefinitionSellerVisibility string
