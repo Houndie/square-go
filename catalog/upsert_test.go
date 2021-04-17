@@ -1,3 +1,4 @@
+//nolint: goconst
 package catalog
 
 import (
@@ -164,5 +165,64 @@ func TestUpsertVariation(t *testing.T) {
 
 	if catalogItem.Variations[0].ID != variationUpsertRes.CatalogObject.ID {
 		t.Fatalf("expected variation id %s, found %s", variationUpsertRes.CatalogObject.ID, catalogItem.Variations[0].ID)
+	}
+}
+
+func TestUpsertDiscount(t *testing.T) {
+	t.Parallel()
+	token := testToken(t)
+
+	itemName := "name"
+
+	client, err := NewClient(token, objects.Sandbox, &http.Client{Timeout: 10 * time.Second})
+	if err != nil {
+		t.Fatalf("error creating new client: %v", err)
+	}
+
+	upsertIdempotencyKey := uuid.Must(uuid.NewV4())
+
+	upsertRes, err := client.UpsertObject(context.Background(), &UpsertObjectRequest{
+		IdempotencyKey: upsertIdempotencyKey.String(),
+		Object: &objects.CatalogObject{
+			ID: "#id",
+			Type: &objects.CatalogDiscount{
+				Name: itemName,
+				DiscountType: &objects.CatalogDiscountFixedAmount{
+					AmountMoney: &objects.Money{
+						Amount:   5,
+						Currency: "USD",
+					},
+				},
+			},
+		},
+	})
+	if err != nil {
+		t.Fatalf("error creating new remote object: %v", err)
+	}
+
+	t.Cleanup(func() {
+		_, err = client.DeleteObject(context.Background(), &DeleteObjectRequest{
+			ObjectID: upsertRes.CatalogObject.ID,
+		})
+
+		if err != nil {
+			t.Fatalf("error deleting remote object: %v", err)
+		}
+	})
+
+	retrieveRes, err := client.RetrieveObject(context.Background(), &RetrieveObjectRequest{
+		ObjectID: upsertRes.CatalogObject.ID,
+	})
+	if err != nil {
+		t.Fatalf("error retrieving object: %v", err)
+	}
+
+	catalogDiscount, ok := retrieveRes.Object.Type.(*objects.CatalogDiscount)
+	if !ok {
+		t.Fatalf("catalog object is not catalog item")
+	}
+
+	if catalogDiscount.Name != itemName {
+		t.Fatalf(catalogDiscount.Name)
 	}
 }
