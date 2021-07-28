@@ -1,6 +1,8 @@
 linters-settings:
   goconst:
     ignore-tests: true
+  nestif:
+    min-complexity: 10
 linters:
   disable-all: true
   enable:

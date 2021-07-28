@@ -47,13 +47,17 @@ func (c *Client) Do(ctx context.Context, method, path string, req interface{}, r
 
 	if method == http.MethodGet {
 		u := c.Endpoint(path)
-		q := u.Query()
 
-		if err := Encoder.Encode(req, q); err != nil {
-			return fmt.Errorf("error populating url parameters: %w", err)
+		if req != nil {
+			q := u.Query()
+
+			if err := Encoder.Encode(req, q); err != nil {
+				return fmt.Errorf("error populating url parameters: %w", err)
+			}
+
+			u.RawQuery = q.Encode()
 		}
 
-		u.RawQuery = q.Encode()
 		endpoint = u.String()
 		bodyBuf = nil
 	} else {
