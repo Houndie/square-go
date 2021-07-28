@@ -159,12 +159,8 @@ func TestUpsertVariation(t *testing.T) {
 		t.Fatalf("catalog object is not catalog item")
 	}
 
-	if len(catalogItem.Variations) != 1 {
+	if len(catalogItem.Variations) != 2 {
 		t.Fatalf("variation not added to item, %d variations found", len(catalogItem.Variations))
-	}
-
-	if catalogItem.Variations[0].ID != variationUpsertRes.CatalogObject.ID {
-		t.Fatalf("expected variation id %s, found %s", variationUpsertRes.CatalogObject.ID, catalogItem.Variations[0].ID)
 	}
 }
 
