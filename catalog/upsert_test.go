@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/Houndie/square-go/objects"
+	"github.com/Houndie/square-go/options"
 	"github.com/gofrs/uuid"
 )
 
@@ -29,7 +30,7 @@ func TestUpsert(t *testing.T) {
 
 	itemName := "name"
 
-	client, err := NewClient(token, objects.Sandbox, &http.Client{Timeout: 10 * time.Second})
+	client, err := NewClient(token, objects.Sandbox, options.WithHTTPClient(&http.Client{Timeout: 10 * time.Second}))
 	if err != nil {
 		t.Fatalf("error creating new client: %v", err)
 	}
@@ -86,7 +87,7 @@ func TestUpsertVariation(t *testing.T) {
 
 	itemName := "name"
 
-	client, err := NewClient(token, objects.Sandbox, &http.Client{Timeout: 10 * time.Second})
+	client, err := NewClient(token, objects.Sandbox, options.WithHTTPClient(&http.Client{Timeout: 10 * time.Second}))
 	if err != nil {
 		t.Fatalf("error creating new client: %v", err)
 	}
@@ -170,7 +171,7 @@ func TestUpsertDiscount(t *testing.T) {
 
 	itemName := "name"
 
-	client, err := NewClient(token, objects.Sandbox, &http.Client{Timeout: 10 * time.Second})
+	client, err := NewClient(token, objects.Sandbox, options.WithHTTPClient(&http.Client{Timeout: 10 * time.Second}))
 	if err != nil {
 		t.Fatalf("error creating new client: %v", err)
 	}

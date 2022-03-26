@@ -2,7 +2,6 @@ package locations
 
 import (
 	"context"
-	"net/http"
 	"os"
 	"testing"
 
@@ -23,7 +22,7 @@ func testToken(t *testing.T) string {
 func TestList(t *testing.T) {
 	t.Parallel()
 
-	client, err := NewClient(testToken(t), objects.Sandbox, &http.Client{})
+	client, err := NewClient(testToken(t), objects.Sandbox)
 	if err != nil {
 		t.Fatal(err)
 	}

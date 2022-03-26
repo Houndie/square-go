@@ -16,6 +16,7 @@ import (
 	"github.com/Houndie/square-go/internal"
 	"github.com/Houndie/square-go/internal/test"
 	"github.com/Houndie/square-go/objects"
+	"github.com/Houndie/square-go/options"
 	"github.com/davecgh/go-spew/spew"
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
@@ -139,7 +140,7 @@ func TestListCatalog(t *testing.T) {
 		},
 	}
 
-	catalogClient, err := NewClient(apiKey, objects.Production, client)
+	catalogClient, err := NewClient(apiKey, objects.Production, options.WithHTTPClient(client))
 	if err != nil {
 		t.Fatalf("error creating square client: %v", err)
 	}
@@ -187,7 +188,7 @@ func TestListCatalogClientError(t *testing.T) {
 		},
 	}
 
-	catalogClient, err := NewClient(apiKey, objects.Production, client)
+	catalogClient, err := NewClient(apiKey, objects.Production, options.WithHTTPClient(client))
 	if err != nil {
 		t.Fatalf("error creating square client: %v", err)
 	}
@@ -237,7 +238,7 @@ func TestListCatalogHttpError(t *testing.T) {
 		},
 	}
 
-	catalogClient, err := NewClient(apiKey, objects.Production, client)
+	catalogClient, err := NewClient(apiKey, objects.Production, options.WithHTTPClient(client))
 	if err != nil {
 		t.Fatalf("error creating square client: %v", err)
 	}
@@ -317,7 +318,7 @@ func TestListCatalogErrorMessage(t *testing.T) {
 		},
 	}
 
-	catalogClient, err := NewClient(apiKey, objects.Production, client)
+	catalogClient, err := NewClient(apiKey, objects.Production, options.WithHTTPClient(client))
 	if err != nil {
 		t.Fatalf("error creating square client: %v", err)
 	}

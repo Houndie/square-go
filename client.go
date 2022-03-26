@@ -2,13 +2,13 @@ package square
 
 import (
 	"fmt"
-	"net/http"
 
 	"github.com/Houndie/square-go/catalog"
 	"github.com/Houndie/square-go/checkout"
 	"github.com/Houndie/square-go/inventory"
 	"github.com/Houndie/square-go/locations"
 	"github.com/Houndie/square-go/objects"
+	"github.com/Houndie/square-go/options"
 	"github.com/Houndie/square-go/orders"
 )
 
@@ -20,28 +20,28 @@ type Client struct {
 	Orders    orders.Client
 }
 
-func NewClient(apiKey string, environment objects.Environment, httpClient *http.Client) (*Client, error) {
-	catalog, err := catalog.NewClient(apiKey, environment, httpClient)
+func NewClient(apiKey string, environment objects.Environment, options ...options.ClientOption) (*Client, error) {
+	catalog, err := catalog.NewClient(apiKey, environment, options...)
 	if err != nil {
 		return nil, fmt.Errorf("error constructing catalog client: %w", err)
 	}
 
-	checkout, err := checkout.NewClient(apiKey, environment, httpClient)
+	checkout, err := checkout.NewClient(apiKey, environment, options...)
 	if err != nil {
 		return nil, fmt.Errorf("error constructing catalog client: %w", err)
 	}
 
-	inventory, err := inventory.NewClient(apiKey, environment, httpClient)
+	inventory, err := inventory.NewClient(apiKey, environment, options...)
 	if err != nil {
 		return nil, fmt.Errorf("error constructing catalog client: %w", err)
 	}
 
-	locations, err := locations.NewClient(apiKey, environment, httpClient)
+	locations, err := locations.NewClient(apiKey, environment, options...)
 	if err != nil {
 		return nil, fmt.Errorf("error constructing catalog client: %w", err)
 	}
 
-	orders, err := orders.NewClient(apiKey, environment, httpClient)
+	orders, err := orders.NewClient(apiKey, environment, options...)
 	if err != nil {
 		return nil, fmt.Errorf("error constructing catalog client: %w", err)
 	}

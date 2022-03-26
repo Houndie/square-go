@@ -14,6 +14,7 @@ import (
 
 	"github.com/Houndie/square-go/internal/test"
 	"github.com/Houndie/square-go/objects"
+	"github.com/Houndie/square-go/options"
 )
 
 func TestBatchRetrieveInventoryCounts(t *testing.T) {
@@ -154,7 +155,7 @@ func TestBatchRetrieveInventoryCounts(t *testing.T) {
 		},
 	}
 
-	squareClient, err := NewClient(apiKey, objects.Production, client)
+	squareClient, err := NewClient(apiKey, objects.Production, options.WithHTTPClient(client))
 	if err != nil {
 		t.Fatalf("error creating square client: %v", err)
 	}
@@ -222,7 +223,7 @@ func TestBatchRetrieveInventoryCountsClientError(t *testing.T) {
 		},
 	}
 
-	squareClient, err := NewClient(apiKey, objects.Production, client)
+	squareClient, err := NewClient(apiKey, objects.Production, options.WithHTTPClient(client))
 	if err != nil {
 		t.Fatalf("error creating square client: %v", err)
 	}
@@ -275,7 +276,7 @@ func TestBatchRetrieveInventoryCountsErrorCode(t *testing.T) {
 		},
 	}
 
-	squareClient, err := NewClient(apiKey, objects.Production, client)
+	squareClient, err := NewClient(apiKey, objects.Production, options.WithHTTPClient(client))
 	if err != nil {
 		t.Fatalf("error creating square client: %v", err)
 	}
@@ -360,7 +361,7 @@ func TestBatchRetrieveInventoryCountsErrorMessage(t *testing.T) {
 		},
 	}
 
-	squareClient, err := NewClient(apiKey, objects.Production, client)
+	squareClient, err := NewClient(apiKey, objects.Production, options.WithHTTPClient(client))
 	if err != nil {
 		t.Fatalf("error creating square client: %v", err)
 	}
