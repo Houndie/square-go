@@ -43,16 +43,18 @@ func BackoffRequestor(maxTime time.Duration, r Requestor) Requestor {
 			}
 
 			err := r(client, req, res)
-			if err != nil {
-				var errs *objects.ErrorList
-				if !errors.As(err, &errs) {
-					return err
-				}
+			if err == nil {
+				return nil
+			}
 
-				for _, e := range errs.Errors {
-					if e.Category != objects.ErrorCategoryRateLimitError || e.Code != objects.ErrorCodeRateLimited {
-						return err
-					}
+			var errs *objects.ErrorList
+			if !errors.As(err, &errs) {
+				return err
+			}
+
+			for _, e := range errs.Errors {
+				if e.Category != objects.ErrorCategoryRateLimitError || e.Code != objects.ErrorCodeRateLimited {
+					return err
 				}
 			}
 
