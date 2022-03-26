@@ -69,12 +69,6 @@ func (c *client) CreateImage(ctx context.Context, req *CreateImageRequest) (*Cre
 
 	httpReq = httpReq.WithContext(ctx)
 
-	resp, err := c.i.HTTPClient.Do(httpReq)
-	if err != nil {
-		return nil, fmt.Errorf("error with http request: %w", err)
-	}
-	defer resp.Body.Close()
-
 	externalRes := &CreateImageResponse{}
 	res := struct {
 		*CreateImageResponse
@@ -83,8 +77,9 @@ func (c *client) CreateImage(ctx context.Context, req *CreateImageRequest) (*Cre
 		CreateImageResponse: externalRes,
 	}
 
-	if err := internal.ParseResponse(resp, res); err != nil {
-		return nil, fmt.Errorf("error parsing response body: %w", err)
+	err = c.i.Requestor(c.i.HTTPClient, httpReq, res)
+	if err != nil {
+		return nil, fmt.Errorf("error with http request: %w", err)
 	}
 
 	return externalRes, nil

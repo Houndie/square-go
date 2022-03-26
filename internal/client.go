@@ -16,18 +16,34 @@ import (
 type Client struct {
 	HTTPClient   *http.Client
 	endpointBase *url.URL
+	Requestor    Requestor
 }
 
-func NewClient(apiKey string, environment objects.Environment, httpClient *http.Client) (*Client, error) {
+func NewClient(apiKey string, environment objects.Environment, options ...ClientOption) (*Client, error) {
 	endpoint, err := endpointToURL(environment)
 	if err != nil {
 		return nil, fmt.Errorf("error parsing endpoint: %w", err)
 	}
 
-	return &Client{
-		HTTPClient:   makeHTTPClient(apiKey, httpClient),
+	c := &Client{
+		HTTPClient: &http.Client{
+			Transport: &middleware{
+				apiKey: apiKey,
+				wrap:   http.DefaultTransport,
+			},
+		},
 		endpointBase: endpoint,
-	}, nil
+		Requestor:    DefaultRequestor(),
+	}
+
+	for _, o := range options {
+		err := o(c)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return c, nil
 }
 
 func (c *Client) Endpoint(e string) *url.URL {
@@ -79,15 +95,5 @@ func (c *Client) Do(ctx context.Context, method, path string, req interface{}, r
 
 	httpReq = httpReq.WithContext(ctx)
 
-	resp, err := c.HTTPClient.Do(httpReq)
-	if err != nil {
-		return fmt.Errorf("error with http request: %w", err)
-	}
-	defer resp.Body.Close()
-
-	if err := ParseResponse(resp, res); err != nil {
-		return fmt.Errorf("error parsing response body: %w", err)
-	}
-
-	return nil
+	return c.Requestor(c.HTTPClient, httpReq, res)
 }

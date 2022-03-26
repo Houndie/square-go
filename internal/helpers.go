@@ -57,37 +57,6 @@ func (m middleware) RoundTrip(r *http.Request) (*http.Response, error) {
 	return m.wrap.RoundTrip(r)
 }
 
-func makeHTTPClient(apiKey string, httpClient *http.Client) *http.Client {
-	if httpClient == nil {
-		return &http.Client{
-			Transport: &middleware{
-				apiKey: apiKey,
-				wrap:   http.DefaultTransport,
-			},
-		}
-	}
-
-	var transport http.RoundTripper
-	if httpClient.Transport == nil {
-		transport = &middleware{
-			apiKey: apiKey,
-			wrap:   http.DefaultTransport,
-		}
-	} else {
-		transport = &middleware{
-			apiKey: apiKey,
-			wrap:   httpClient.Transport,
-		}
-	}
-
-	return &http.Client{
-		Transport:     transport,
-		CheckRedirect: httpClient.CheckRedirect,
-		Jar:           httpClient.Jar,
-		Timeout:       httpClient.Timeout,
-	}
-}
-
 type WithErrors struct {
 	Errors []*objects.Error `json:"errors"`
 }
